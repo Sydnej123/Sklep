@@ -83,10 +83,11 @@
                            <children>
                               <Label text="Login" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
                               <Label text="Hasło" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                              <Button fx:id="goForwardButton" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP" onAction="#login"/>
+                              <Button fx:id="goForwardButton" mnemonicParsing="false" onAction="#login" text="Button" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP" />
                               <CheckBox mnemonicParsing="false" text="Zapamiętaj login" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP" />
                               <TextField fx:id="loginField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label fx:id="wrongPassword" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="217.0" textAlignment="CENTER" textFill="#d71212" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                            </children>
                         </GridPane>
                      </content>

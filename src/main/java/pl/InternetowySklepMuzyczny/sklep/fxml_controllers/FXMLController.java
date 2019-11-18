@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -13,9 +14,12 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
 
+import java.util.List;
+
 @org.springframework.stereotype.Controller
 public class FXMLController {
-
+    @FXML
+    Label wrongPassword;
     @FXML
     Button goForwardButton;
     @FXML
@@ -30,15 +34,19 @@ public class FXMLController {
     private KlientServiceImp klientServiceImp;
     public void login(){
         try{
-            System.out.println(klientService.getClientByUsername(loginField.getText()));
-            System.out.println("Wciskam");
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainScreen.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Sklep Internetowy");
-            stage.setScene(new Scene(root, 1280, 720));
-            stage.show();
-            Stage stageToClose = (Stage) goForwardButton.getScene().getWindow();
-            stageToClose.close();
+
+            List<Integer> matchedLogins = klientService.getClientByUsername(loginField.getText());
+            if(!matchedLogins.isEmpty()) {
+                klientService.getPasswordById(matchedLogins.get(0));
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/mainScreen.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Sklep Internetowy");
+                stage.setScene(new Scene(root, 1280, 720));
+                stage.show();
+                Stage stageToClose = (Stage) goForwardButton.getScene().getWindow();
+                stageToClose.close();
+            }else
+                wrongPassword.setText("Brak uzytkownika w bazie");
         }catch(Exception e){
             e.printStackTrace();
         }

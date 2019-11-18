@@ -17,5 +17,10 @@ public class KlientServiceImp implements KlientService{
         return klientRepository.findByLogin(username);
     }
 
+    @Override
+    public ArrayList<String> getPasswordById(Integer id) {
+        return klientRepository.getPasswordById(id);
+    }
+
 
 }
