@@ -4,6 +4,7 @@ import lombok.Generated;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Generated
@@ -30,4 +31,7 @@ public class Klient implements Serializable {
     @Column(nullable = false)
     private int klient_nr_mieszkania;
     private String klient_kod_pocztowy;
+
+    @OneToMany(mappedBy = "klient")
+    private Set<Komentarz> komentarz;
 }

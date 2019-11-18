@@ -12,8 +12,12 @@ public class Komentarz {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     int komentarz_id;
 
-    int album_id;
-    int klient_id;
+    @ManyToOne
+    private Album album;
+
+    @ManyToOne
+    private Klient klient;
+
     @Column(length=1000,nullable = false)
     String komentarz_tresc;
     int komentarz_ocena;
