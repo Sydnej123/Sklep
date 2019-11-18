@@ -10,7 +10,6 @@ public class Album {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int album_id;
-
     private int gatunek_id;
     private int zespol_id;
     @Column(nullable=false,length = 30)
