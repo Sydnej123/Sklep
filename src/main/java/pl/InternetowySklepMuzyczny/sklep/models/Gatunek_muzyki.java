@@ -19,4 +19,27 @@ public class Gatunek_muzyki {
     @Column(length = 25)
     String gatunek_nazwa;
 
+    public int getGatunek_id() {
+        return gatunek_id;
+    }
+
+    public void setGatunek_id(int gatunek_id) {
+        this.gatunek_id = gatunek_id;
+    }
+
+    public Set<Album> getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Set<Album> album) {
+        this.album = album;
+    }
+
+    public String getGatunek_nazwa() {
+        return gatunek_nazwa;
+    }
+
+    public void setGatunek_nazwa(String gatunek_nazwa) {
+        this.gatunek_nazwa = gatunek_nazwa;
+    }
 }
