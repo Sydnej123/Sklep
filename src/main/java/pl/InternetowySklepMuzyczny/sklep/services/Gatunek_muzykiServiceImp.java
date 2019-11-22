@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public class Gatunek_muzykiServiceImp implements  Gatunek_muzykiService{
     @Autowired
-    Gatunek_muzykiRepository gatunek_muzykiRepository;
+    private Gatunek_muzykiRepository gatunek_muzykiRepository;
     @Override
     public List<Gatunek_muzyki> findAllGatunek() {
         List<Gatunek_muzyki> result = new ArrayList<>();
@@ -19,5 +19,8 @@ public class Gatunek_muzykiServiceImp implements  Gatunek_muzykiService{
             result.add(gatunek_muzyki);
         }
         return result;
+    }
+    public void check(){
+        System.out.println("Dziala");
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController;
 
 
 @SpringBootApplication
@@ -30,6 +31,7 @@ public class SklepApplication extends Application {
 		springContext = SpringApplication.run(SklepApplication.class);
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/login_register_window.fxml"));
 		fxmlLoader.setControllerFactory(springContext::getBean);
+		LoginScreenController.springContext = springContext;
 		rootNode = fxmlLoader.load();
 	}
 	@Override
