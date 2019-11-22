@@ -20,7 +20,5 @@ public class Gatunek_muzykiServiceImp implements  Gatunek_muzykiService{
         }
         return result;
     }
-    public void check(){
-        System.out.println("Dziala");
-    }
+
 }
