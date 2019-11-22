@@ -76,12 +76,17 @@ public class MainScreenController  implements Initializable {
         priceLabel.setText("Cena");
         i=0;
         ImageView image;
-        Image  tempImage;
+        Image  tempImage =new Image("Genesis83.jpg");
         GridPane explorerGrid = new GridPane();
         for(Album album : albums){
             temporaryBorderPane.add(new BorderPane());
             image = new ImageView();
-            tempImage = new Image("Genesis83.jpg");
+            try {
+                tempImage = new Image(album.getAlbum_zdjecie_sciezka(), 340, 340, false, false);
+            }catch(Exception e){
+                System.out.println(album.getAlbum_zdjecie_sciezka());
+                e.printStackTrace();
+            }
             image.setImage(tempImage);
             temporaryBorderPane.get(i).setCenter(image);
             albumName = new Label();
