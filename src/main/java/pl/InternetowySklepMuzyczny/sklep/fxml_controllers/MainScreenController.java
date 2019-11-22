@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -74,10 +75,15 @@ public class MainScreenController  implements Initializable {
         priceLabel = new Label();
         priceLabel.setText("Cena");
         i=0;
+        ImageView image;
+        Image  tempImage;
         GridPane explorerGrid = new GridPane();
         for(Album album : albums){
             temporaryBorderPane.add(new BorderPane());
-            temporaryBorderPane.get(i).setCenter(new ImageView());
+            image = new ImageView();
+            tempImage = new Image("Genesis83.jpg");
+            image.setImage(tempImage);
+            temporaryBorderPane.get(i).setCenter(image);
             albumName = new Label();
             albumName.setText(album.getAlbum_nazwa());
             band = new Label();
@@ -86,12 +92,22 @@ public class MainScreenController  implements Initializable {
             price.setText(Float.toString(album.getAlbum_cena()));
             temporaryAnchorPane.add(new AnchorPane());
             temporaryAnchorPane.get(i).getChildren().addAll(albumName,albumNameLabel,band,bandLabel,priceLabel,price);
+            temporaryAnchorPane.get(i).setPrefSize(350,200);
             AnchorPane.setTopAnchor(albumNameLabel,10.0);
+            AnchorPane.setLeftAnchor(albumNameLabel,10.0);
             AnchorPane.setTopAnchor(albumName,10.0);
             AnchorPane.setRightAnchor(albumName,10.0);
 
             AnchorPane.setTopAnchor(bandLabel,50.0);
+            AnchorPane.setLeftAnchor(bandLabel,10.0);
+
             AnchorPane.setTopAnchor(priceLabel,90.0);
+            AnchorPane.setLeftAnchor(priceLabel,10.0);
+
+            AnchorPane.setRightAnchor(price,10.0);
+            AnchorPane.setTopAnchor(price,90.0);
+
+
             temporaryBorderPane.get(i).setBottom(temporaryAnchorPane.get(i));
             explorerGrid.add(temporaryBorderPane.get(i),i%3,i/3);
             i++;
