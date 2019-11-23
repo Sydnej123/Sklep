@@ -67,13 +67,8 @@ public class MainScreenController  implements Initializable {
         List<BorderPane> temporaryBorderPane = new ArrayList<>();
         List<AnchorPane> temporaryAnchorPane = new ArrayList<>();
         Label albumNameLabel,albumName,bandLabel,band,priceLabel,price;
-        Button addToChart;
-        albumNameLabel = new Label();
-        albumNameLabel.setText("Nazwa albumu");
-        bandLabel = new Label();
-        bandLabel.setText("Wykonawca/zespół");
-        priceLabel = new Label();
-        priceLabel.setText("Cena");
+        List<Button> addToChartButtons = new ArrayList<>();
+
         i=0;
         ImageView image;
         Image  tempImage =new Image("Genesis83.jpg");
@@ -92,11 +87,21 @@ public class MainScreenController  implements Initializable {
             albumName = new Label();
             albumName.setText(album.getAlbum_nazwa());
             band = new Label();
-           // band.setText(album.getZespol().getZespol_nazwa());
+            band.setText(album.getZespol().getZespol_nazwa());
+
             price = new Label();
             price.setText(Float.toString(album.getAlbum_cena()));
+
+            addToChartButtons.add(new Button());
+            addToChartButtons.get(i).setText("Dodaj do koszyka");
+            albumNameLabel = new Label();
+            albumNameLabel.setText("Nazwa albumu");
+            bandLabel = new Label();
+            bandLabel.setText("Wykonawca/zespół");
+            priceLabel = new Label();
+            priceLabel.setText("Cena");
             temporaryAnchorPane.add(new AnchorPane());
-            temporaryAnchorPane.get(i).getChildren().addAll(albumName,albumNameLabel,band,bandLabel,priceLabel,price);
+            temporaryAnchorPane.get(i).getChildren().addAll(albumName,albumNameLabel,band,bandLabel,priceLabel,price,addToChartButtons.get(i));
             temporaryAnchorPane.get(i).setPrefSize(350,200);
             AnchorPane.setTopAnchor(albumNameLabel,10.0);
             AnchorPane.setLeftAnchor(albumNameLabel,10.0);
@@ -105,6 +110,8 @@ public class MainScreenController  implements Initializable {
 
             AnchorPane.setTopAnchor(bandLabel,50.0);
             AnchorPane.setLeftAnchor(bandLabel,10.0);
+            AnchorPane.setTopAnchor(band, 50.0);
+            AnchorPane.setRightAnchor(band, 10.0);
 
             AnchorPane.setTopAnchor(priceLabel,90.0);
             AnchorPane.setLeftAnchor(priceLabel,10.0);
@@ -112,6 +119,8 @@ public class MainScreenController  implements Initializable {
             AnchorPane.setRightAnchor(price,10.0);
             AnchorPane.setTopAnchor(price,90.0);
 
+            AnchorPane.setRightAnchor(addToChartButtons.get(i),10.0);
+            AnchorPane.setTopAnchor(addToChartButtons.get(i),130.0);
 
             temporaryBorderPane.get(i).setBottom(temporaryAnchorPane.get(i));
             explorerGrid.add(temporaryBorderPane.get(i),i%3,i/3);

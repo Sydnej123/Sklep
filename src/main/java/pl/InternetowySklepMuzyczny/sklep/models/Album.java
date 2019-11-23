@@ -10,6 +10,7 @@ public class Album {
     @ManyToOne
     private Gatunek_muzyki gatunek_muzyki;
     @ManyToOne
+    @JoinColumn(name = "zespol_id", nullable = false)
     private Zespol zespol;
 
     @OneToMany(mappedBy="album")
