@@ -60,7 +60,7 @@
             <AnchorPane prefHeight="88.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
                <children>
                   <TextField layoutX="432.0" layoutY="45.0" prefHeight="25.0" prefWidth="220.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="505.0" AnchorPane.rightAnchor="555.0" AnchorPane.topAnchor="45.0" />
-                  <Button layoutX="661.0" layoutY="45.0" mnemonicParsing="false" onAction="#buildScreen" text="Szukaj" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="725.0" AnchorPane.rightAnchor="505.0" AnchorPane.topAnchor="45.0" />
+                  <Button layoutX="661.0" layoutY="45.0" mnemonicParsing="false"  text="Szukaj" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="725.0" AnchorPane.rightAnchor="505.0" AnchorPane.topAnchor="45.0" />
                   <Label layoutX="513.0" layoutY="27.0" prefHeight="17.0" prefWidth="100.0" text="Wyszukiwarka płyt" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="580.0" AnchorPane.rightAnchor="580.0" AnchorPane.topAnchor="27.0" />
                </children>
             </AnchorPane>

@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController">
+<VBox id="vBoxScene" fx:id="vBoxScene" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -60,9 +60,9 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
-            <TabPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <TabPane fx:id="tabPane" onKeyPressed="#handleOnKeyPressed" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <tabs>
-                  <Tab closable="false" text="Logowanie">
+                  <Tab fx:id="logowanieTab" closable="false" text="Logowanie">
                      <content>
                         <GridPane>
                           <columnConstraints>
@@ -83,8 +83,8 @@
                            <children>
                               <Label text="Login" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
                               <Label text="Hasło" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" />
-                              <Button fx:id="goForwardButton" mnemonicParsing="false" onAction="#login" text="Button" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP" />
-                              <CheckBox mnemonicParsing="false" text="Zapamiętaj login" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP" />
+                              <Button fx:id="goForwardButton" mnemonicParsing="false" onAction="#login" text="Zaloguj" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6" GridPane.valignment="TOP" />
+                              <CheckBox fx:id="rememberBox" mnemonicParsing="false" text="Zapamiętaj login" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5" GridPane.valignment="TOP" />
                               <TextField fx:id="loginField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label fx:id="wrongPassword" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="217.0" textAlignment="CENTER" textFill="#d71212" GridPane.columnIndex="1" GridPane.rowIndex="7" />
@@ -92,7 +92,7 @@
                         </GridPane>
                      </content>
                   </Tab>
-                  <Tab closable="false" text="Rejestracja">
+                  <Tab fx:id="rejestracjaTab" closable="false" text="Rejestracja">
                      <content>
                         <GridPane>
                            <columnConstraints>

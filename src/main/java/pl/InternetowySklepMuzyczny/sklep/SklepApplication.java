@@ -37,6 +37,7 @@ public class SklepApplication extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setScene(new Scene(rootNode));
+		primaryStage.setTitle("Sklep internetowy");
 		primaryStage.show();
 	}
 	@Override

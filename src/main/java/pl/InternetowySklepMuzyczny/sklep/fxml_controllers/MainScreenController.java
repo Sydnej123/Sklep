@@ -44,9 +44,6 @@ public class MainScreenController  implements Initializable {
     private AlbumServiceImp albumServiceImp;
 
     private final String paneButtonStyle = "-fx-width: 100px;";
-    public void buildScreen(){
-
-    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
