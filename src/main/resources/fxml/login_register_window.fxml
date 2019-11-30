@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="vBoxScene" fx:id="vBoxScene" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController">
+<VBox id="vBoxScene" fx:id="vBoxScene" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -115,14 +115,19 @@
                            <children>
                               <Label text="Login" GridPane.columnIndex="1" GridPane.valignment="BOTTOM" />
                               <Label text="Hasło" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" />
-                              <Button mnemonicParsing="false" text="Zarejestruj" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="TOP" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <PasswordField GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <AnchorPane GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="9" GridPane.valignment="TOP">
+                                 <children>
+                                    <Button fx:id="registrationButton" layoutX="141.0" layoutY="2.0" mnemonicParsing="false" text="Zarejestruj" />
+                                    <Label fx:id="registrationErrorLabel" alignment="CENTER" layoutX="1.0" layoutY="45.0" prefHeight="17.0" prefWidth="212.0" text="Błąd" textAlignment="CENTER" textFill="#d71212" visible="false" />
+                                 </children>
+                              </AnchorPane>
+                              <TextField fx:id="registrationLoginField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              <PasswordField fx:id="registrationPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Label text="Powtorz hasło" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <PasswordField GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <PasswordField fx:id="registrationRepeatPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                               <Label text="Email" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <CheckBox mnemonicParsing="false" text="Akceptuje regulamin" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                              <TextField fx:id="registrationEmailField" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                              <CheckBox fx:id="registrationCheckBox" mnemonicParsing="false" text="Akceptuje regulamin" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                            </children>
                         </GridPane>
                      </content>

@@ -42,10 +42,29 @@ public class LoginScreenController implements Initializable {
     PasswordField passwordField;
     @FXML
     VBox vBoxScene;
+    @FXML
+    TextField registrationLoginField;
+    @FXML
+    PasswordField registrationPasswordField;
+    @FXML
+    PasswordField registrationRepeatPasswordField;
+    @FXML
+    TextField registrationEmailField;
+    @FXML
+    CheckBox registrationCheckBox;
+    @FXML
+    Label registrationErrorLabel;
+
     @Autowired
     private KlientServiceImp klientService;
 
-
+    private final static  String SHORT_LOGIN_FIELD = "Zbyt krótki login";
+    private final static String SHORT_PASSWORD_FIELD = "Zbyt krótkie hasło";
+    private final static String PASSWORD_MISMATCH = "Hasła nie są identyczne";
+    private final static String INVALID_LOGIN = "Login posiada niedozwolone znaki";
+    private final static String LOGIN_EXISTS = "Podany login jest juz zajęty";
+    private final static String EMAIL_EXISTS = "Podany e-mail jest już zajęty";
+    private final static String ACCEPT_RULES = "Wymagane jest zaakceptowanie regulaminu";
     public static ConfigurableApplicationContext springContext;
 
 
@@ -95,6 +114,17 @@ public class LoginScreenController implements Initializable {
     }
 
     private void register() {
+    if(registrationLoginField.getText() == null || registrationLoginField.getText().length() < 5){
+        registrationErrorLabel.setText(SHORT_LOGIN_FIELD);
+        registrationErrorLabel.setVisible(true);
+    }
+    if(registrationPasswordField.getText() == null || registrationPasswordField.getText().length() < 5){
+        registrationErrorLabel.setText(SHORT_PASSWORD_FIELD);
+        registrationErrorLabel.setVisible(true);
+    }
+    if(!registrationPasswordField.getText().equals(registrationRepeatPasswordField.getText())){
+
+    }
     }
 
     @Override
