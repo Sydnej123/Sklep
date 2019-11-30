@@ -33,5 +33,9 @@ public class KlientServiceImp implements KlientService{
         klientRepository.save(klient);
     }
 
+    @Override
+    public ArrayList<String> findLoginByID(Integer id) {
+        return klientRepository.getLoginByID(id);
+    }
 
 }

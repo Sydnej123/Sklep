@@ -9,4 +9,5 @@ public interface KlientService {
     ArrayList<String> getPasswordById(Integer id);
     ArrayList<Integer> findbyEmail(String email);
     void save(Klient klient);
+    ArrayList<String> findLoginByID(Integer id);
 }

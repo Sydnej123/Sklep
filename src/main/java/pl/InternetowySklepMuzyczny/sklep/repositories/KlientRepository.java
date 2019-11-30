@@ -16,5 +16,7 @@ ArrayList<Integer> findByLogin(String login);
 ArrayList<String> getPasswordById(int id);
 @Query("SELECT klient_id from Klient where klient_email=?1")
 ArrayList<Integer> findbyEmail(String email);
+@Query("SELECT klient_login from Klient where klient_id=?1")
+ArrayList<String> getLoginByID(Integer id);
 
 }

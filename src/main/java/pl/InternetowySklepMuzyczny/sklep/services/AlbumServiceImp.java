@@ -26,4 +26,9 @@ public class AlbumServiceImp implements AlbumService{
         }
         return result;
     }
+
+    @Override
+    public List<Album> findByGenre(Integer id) {
+        return albumRepository.findByGenre(id);
+    }
 }

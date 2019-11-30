@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,6 +39,7 @@ public class SklepApplication extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setScene(new Scene(rootNode));
 		primaryStage.setTitle("Sklep internetowy");
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("/icons/shopping.png")));
 		primaryStage.show();
 	}
 	@Override

@@ -9,6 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import pl.InternetowySklepMuzyczny.sklep.Session;
 import pl.InternetowySklepMuzyczny.sklep.models.Klient;
 import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
 
@@ -96,12 +98,13 @@ public class LoginScreenController implements Initializable {
                     writer.flush();
                     writer.close();
                 }
-
+                Session.userID= matchedLogins.get(0);
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/mainScreen.fxml"));
                 fxmlLoader.setControllerFactory(springContext::getBean);
                 Parent root = fxmlLoader.load();
                 Stage stage = new Stage();
                 stage.setTitle("Sklep Internetowy");
+                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/icons/shopping.png")));
                 stage.setScene(new Scene(root, 1280, 720));
                 stage.show();
 
@@ -197,6 +200,7 @@ public class LoginScreenController implements Initializable {
     }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
             registrationButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
