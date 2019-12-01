@@ -31,4 +31,9 @@ public class AlbumServiceImp implements AlbumService{
     public List<Album> findByGenre(Integer id) {
         return albumRepository.findByGenre(id);
     }
+
+    @Override
+    public Integer countBandAlbums(Integer bandID) {
+        return albumRepository.countBandAlbums(bandID);
+    }
 }

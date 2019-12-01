@@ -16,14 +16,17 @@ import org.springframework.stereotype.Controller;
 import pl.InternetowySklepMuzyczny.sklep.Session;
 import pl.InternetowySklepMuzyczny.sklep.models.Album;
 import pl.InternetowySklepMuzyczny.sklep.models.Gatunek_muzyki;
+import pl.InternetowySklepMuzyczny.sklep.models.Zespol;
 import pl.InternetowySklepMuzyczny.sklep.services.AlbumServiceImp;
 import pl.InternetowySklepMuzyczny.sklep.services.Gatunek_muzykiServiceImp;
 import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
+import pl.InternetowySklepMuzyczny.sklep.services.ZespolServiceImp;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainScreenController  implements Initializable {
@@ -32,6 +35,9 @@ public class MainScreenController  implements Initializable {
     private List<Album> filteredAlbums = new ArrayList<>();
     @FXML
     TitledPane gatunekPane;
+
+    @FXML
+    TitledPane zespolPane;
 
     @FXML
     ScrollPane explorerScrollPane;
@@ -47,12 +53,16 @@ public class MainScreenController  implements Initializable {
     @Autowired
     private AlbumServiceImp albumServiceImp;
 
+    @Autowired
+    private ZespolServiceImp zespolServiceImp;
+
     private final String paneButtonStyle = "-fx-width: 100px;";
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loggedAsLabel.setText("Zalogowano jako: "+klientService.findLoginByID(Session.userID).get(0));
-        GridPane gp = new GridPane();
+        GridPane genreGridPane = new GridPane();
+        GridPane zespolGridPane = new GridPane();
         List<CheckBox> temporaryBoxes = new ArrayList<>();
         List<Gatunek_muzyki> k = gatunek_muzykiServiceImp.findAllGatunek();
         int i =0;
@@ -61,10 +71,22 @@ public class MainScreenController  implements Initializable {
             temporaryBoxes.get(i).setText(gatunek.getGatunek_nazwa()+" ("+albumServiceImp.countGatunek(gatunek.getGatunek_id())+")");
             temporaryBoxes.get(i).setPrefSize(200,25);
             temporaryBoxes.get(i).setTextAlignment(TextAlignment.LEFT);
-            gp.addRow(i,temporaryBoxes.get(i));
+            genreGridPane.addRow(i,temporaryBoxes.get(i));
             i++;
         }
-        gatunekPane.setContent(gp);
+        i=0;
+        ArrayList<Zespol> zespols = zespolServiceImp.findAll();
+        List<CheckBox> temporaryArtists = new ArrayList<>();
+        for(Zespol zespol: zespols){
+            temporaryArtists.add(new CheckBox());
+            temporaryArtists.get(i).setText(zespol.getZespol_nazwa()+" ("+albumServiceImp.countBandAlbums(zespol.getZespol_id())+")");
+            temporaryArtists.get(i).setPrefSize(200,25);
+            temporaryArtists.get(i).setTextAlignment(TextAlignment.LEFT);
+            zespolGridPane.addRow(i,temporaryArtists.get(i));
+            i++;
+        }
+        zespolPane.setContent(zespolGridPane);
+        gatunekPane.setContent(genreGridPane);
         albums = albumServiceImp.findAll();
         List<BorderPane> temporaryBorderPane = new ArrayList<>();
         List<AnchorPane> temporaryAnchorPane = new ArrayList<>();
@@ -135,10 +157,15 @@ public class MainScreenController  implements Initializable {
                 @Override
                 public void handle(ActionEvent event) {
                     if(box.isSelected()){
-                        filterByGenre(temporaryBoxes.indexOf(box));
-                        repaintExplorer();
+                        filterByGenre(temporaryBoxes.indexOf(box)+1);
+                    }else {
+                        removeGenreFilter(temporaryBoxes.indexOf(box)+1);
+
+                    }
+                    if(filteredAlbums.isEmpty()){
+                        repaintExplorer(albums);
                     }else
-                        removeGenreFilter();
+                    repaintExplorer(filteredAlbums);
                 }
             });
         }
@@ -146,14 +173,17 @@ public class MainScreenController  implements Initializable {
 
     }
 
-    private void removeGenreFilter() {
+    private void removeGenreFilter(int genreID) {
+        filteredAlbums.removeAll(albums.stream().filter(album -> album.getGatunek_muzyki().getGatunek_id() == genreID).collect(Collectors.toList()));
     }
 
     public void filterByGenre(Integer genreID){
-    filteredAlbums.addAll(albumServiceImp.findByGenre(genreID));
+        filteredAlbums.addAll(albums.stream().filter(album -> album.getGatunek_muzyki().getGatunek_id() == genreID).collect(Collectors.toList()));
     }
 
-    public void repaintExplorer() {
+
+
+    public void repaintExplorer(List<Album> albumsToPaint) {
 
         List<BorderPane> temporaryBorderPane = new ArrayList<>();
         List<AnchorPane> temporaryAnchorPane = new ArrayList<>();
@@ -163,7 +193,7 @@ public class MainScreenController  implements Initializable {
         ImageView image;
         Image tempImage = new Image("Genesis83.jpg");
         GridPane explorerGrid = new GridPane();
-        for (Album album : filteredAlbums) {
+        for (Album album : albumsToPaint) {
             temporaryBorderPane.add(new BorderPane());
             image = new ImageView();
             try {
@@ -211,4 +241,8 @@ public class MainScreenController  implements Initializable {
         }
         explorerScrollPane.setContent(explorerGrid);
 
-    }}
+    }
+    public void openAdminWindow(){
+
+    }
+}

@@ -8,4 +8,5 @@ public interface AlbumService {
     long countGatunek(int gatunek_id);
     List<Album> findAll();
     List<Album> findByGenre(Integer id);
+    Integer countBandAlbums(Integer bandID);
 }

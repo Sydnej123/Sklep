@@ -8,6 +8,7 @@ public class Album {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int album_id;
     @ManyToOne
+    @JoinColumn(name = "gatunek_id", nullable = false)
     private Gatunek_muzyki gatunek_muzyki;
     @ManyToOne
     @JoinColumn(name = "zespol_id", nullable = false)
