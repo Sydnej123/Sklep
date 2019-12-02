@@ -42,4 +42,9 @@ public class Gatunek_muzyki {
     public void setGatunek_nazwa(String gatunek_nazwa) {
         this.gatunek_nazwa = gatunek_nazwa;
     }
+
+    @Override
+    public String toString() {
+        return gatunek_nazwa;
+    }
 }

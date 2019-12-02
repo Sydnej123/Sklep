@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 public class AdminPanelController {
 
     @FXML
-    TitledPane editClientsTab, clientOrderPane;
+    TitledPane editClientsTab, clientOrderPane, albumsEditPane;
 
     @FXML
-    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable;
+    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable;
 
     @FXML
     TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField;
@@ -41,7 +41,7 @@ public class AdminPanelController {
     Button filterButton;
 
     @FXML
-    ChoiceBox klientChoise;
+    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter;
 
 
     @Autowired
@@ -60,6 +60,8 @@ public class AdminPanelController {
     Szczegoly_zamowieniaServiceImp szczegoly_zamowieniaServiceImp;
     @Autowired
     AlbumServiceImp albumServiceImp;
+    @Autowired
+    Gatunek_muzykiServiceImp gatunek_muzykiServiceImp;
     private boolean firstTime= true;
     public void insertNewClient(){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -223,9 +225,6 @@ public class AdminPanelController {
             TableColumn<Klient, String> nazwiskoColumn = new TableColumn<>("Nazwisko");
             TableColumn<Klient, String> emailColumn = new TableColumn<>("E-mail");
             TableColumn<Klient, String> orderCountColumn = new TableColumn<>("Ilość zamówień");
-
-
-
             idColumn.setCellValueFactory(new PropertyValueFactory("klient_id"));
             loginColumn.setCellValueFactory(new PropertyValueFactory("klient_login"));
             imieColumn.setCellValueFactory(new PropertyValueFactory("klient_imie"));
@@ -236,7 +235,53 @@ public class AdminPanelController {
         }
             bestClientsTable.getItems().clear();
             bestClientsTable.getItems().addAll(klientServiceImp.getOrderedClients());// wszyscy uzytkownicy po najwiekszej ilosc izamowien
-        System.out.println(zamowienieServiceImp.getOrderByClientId(1));
+    }
+    public void showEditAlbumsPane(){
+        if(albumEditTable.getColumns().isEmpty()){
+            TableColumn<Album, String> idAlbumColumn = new TableColumn<>("Id");
+            TableColumn<Album, String> gatunekColumn = new TableColumn<>("Gatunek");
+            TableColumn<Album, String> zespolColumn = new TableColumn<>("Zespół");
+            TableColumn<Album, String> nazwaColumn = new TableColumn<>("Nazwa albumu");
+            TableColumn<Album, String> cenaColumn = new TableColumn<>("Cena");
+            TableColumn<Album, String> opisColumn = new TableColumn<>("Opis");
+            TableColumn<Album, String> sciezkaDoZdjeciaColumn = new TableColumn<>("Ścieżka");
+            TableColumn<Album, String> iloscColumn = new TableColumn<>("Ilość");
+
+            idAlbumColumn.setCellValueFactory(new PropertyValueFactory("album_id"));
+            gatunekColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getGatunek_muzyki().getGatunek_nazwa())));
+            zespolColumn.setCellValueFactory(C -> new ReadOnlyStringWrapper(String.valueOf(C.getValue().getZespol().getZespol_nazwa())));
+            nazwaColumn.setCellValueFactory(new PropertyValueFactory("album_nazwa"));
+            cenaColumn.setCellValueFactory(new PropertyValueFactory("album_cena"));
+            iloscColumn.setCellValueFactory(new PropertyValueFactory("album_ilosc"));
+            opisColumn.setCellValueFactory(new PropertyValueFactory("album_opis"));
+            sciezkaDoZdjeciaColumn.setCellValueFactory(new PropertyValueFactory("album_zdjecie_sciezka"));
+            albumEditTable.getColumns().addAll(idAlbumColumn,gatunekColumn,zespolColumn,nazwaColumn,cenaColumn,opisColumn,sciezkaDoZdjeciaColumn,iloscColumn);
+
+            gatunekTableFilter.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
+            gatunekTableFilter.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    Gatunek_muzyki gatunek = (Gatunek_muzyki) gatunekTableFilter.getValue();
+                }
+            });
+            zespolTableFilter.getItems().addAll(zespolServiceImp.findAll());
+            zespolTableFilter.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    Zespol zespol = (Zespol) zespolTableFilter.getValue();
+                }
+            });
+
+        }
+        albumEditTable.getItems().clear();
+        //albumEditTable.getItems().addAll(albumServiceImp.findAll().stream().collect(Collectors.toList()));
+        albumServiceImp.findAll().forEach(c -> albumEditTable.getItems().add(c));
+
+        }
+        public void filterAlbums(){
+        List<Album> filteredAlbums = albumEditTable.getItems();
+
+       // filteredAlbums = filteredAlbums.stream().filter();
+        }
     }
 
-}

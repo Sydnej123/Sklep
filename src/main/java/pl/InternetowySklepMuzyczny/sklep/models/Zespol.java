@@ -20,6 +20,11 @@ public class Zespol {
         this.album = album;
     }
 
+    @Override
+    public String toString() {
+        return zespol_nazwa;
+    }
+
     @OneToMany(mappedBy = "zespol")
     List<Album> album = new ArrayList<>();
     @Column(length = 20)

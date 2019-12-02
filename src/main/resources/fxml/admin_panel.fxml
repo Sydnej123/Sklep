@@ -117,25 +117,13 @@
                <children>
                   <Accordion layoutY="7.0" prefHeight="686.0" prefWidth="1280.0">
                     <panes>
-                      <TitledPane animated="false" text="Edytuj albumy">
+                      <TitledPane fx:id="albumsEditPane" animated="false" onMouseClicked="#showEditAlbumsPane" text="Edytuj albumy">
                         <content>
                               <AnchorPane>
                                  <children>
                                     <ScrollPane>
                                        <content>
-                                          <TableView prefHeight="445.0" prefWidth="1280.0">
-                                            <columns>
-                                              <TableColumn prefWidth="100.0" text="Id" />
-                                              <TableColumn prefWidth="100.0" text="gatunek_id" />
-                                                <TableColumn prefWidth="100.0" text="zespol_id" />
-                                                <TableColumn prefWidth="125.0" text="Nazwa" />
-                                                <TableColumn prefWidth="100.0" text="Ilość" />
-                                                <TableColumn prefWidth="100.0" text="Cena" />
-                                                <TableColumn prefWidth="200.0" text="Opis" />
-                                                <TableColumn prefWidth="150.0" text="Zdjęcie ścieżka" />
-                                                <TableColumn minWidth="300.0" prefWidth="300.0" text="Operacja" />
-                                            </columns>
-                                          </TableView>
+                                          <TableView fx:id="albumEditTable" onMouseClicked="#showEditAlbumsPane" prefHeight="450.0" prefWidth="1103.0" />
                                        </content>
                                     </ScrollPane>
                                     <Label layoutX="14.0" layoutY="585.0" text="Dodaj album:" />
@@ -148,9 +136,9 @@
                                     <ChoiceBox layoutX="283.0" layoutY="581.0" prefWidth="150.0" />
                                     <Label layoutX="14.0" layoutY="498.0" text="Filtruj:" />
                                     <Label layoutX="114.0" layoutY="479.0" text="Gatunek:" />
-                                    <ChoiceBox layoutX="114.0" layoutY="494.0" prefWidth="150.0" />
-                                    <ChoiceBox layoutX="283.0" layoutY="494.0" prefWidth="150.0" />
-                                    <Button layoutX="458.0" layoutY="494.0" mnemonicParsing="false" text="Filtruj" />
+                                    <ChoiceBox fx:id="gatunekTableFilter" layoutX="114.0" layoutY="494.0" prefWidth="150.0" />
+                                    <ChoiceBox fx:id="zespolTableFilter" layoutX="283.0" layoutY="494.0" prefWidth="150.0" />
+                                    <Button layoutX="458.0" layoutY="494.0" mnemonicParsing="false" onAction="#filterAlbums" text="Filtruj" />
                                     <Label layoutX="283.0" layoutY="479.0" text="Zespół:" />
                                     <Label layoutX="114.0" layoutY="563.0" text="Gatunek:" />
                                     <Label layoutX="283.0" layoutY="563.0" text="Zespół:" />
@@ -180,7 +168,8 @@
                                           </TableView>
                                        </content>
                                     </ScrollPane>
-                                 </children></AnchorPane>
+                                 </children>
+                              </AnchorPane>
                         </content>
                       </TitledPane>
                     </panes>

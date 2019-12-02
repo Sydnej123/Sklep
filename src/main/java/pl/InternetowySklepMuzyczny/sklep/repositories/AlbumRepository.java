@@ -15,4 +15,5 @@ public interface AlbumRepository extends CrudRepository<Album,Integer> {
     List<Album> findByGenre(Integer id);
     @Query("SELECT COUNT(album_id) FROM Album where zespol_id=?1")
     Integer countBandAlbums(Integer bandID);
+
 }
