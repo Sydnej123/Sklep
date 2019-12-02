@@ -10,4 +10,5 @@ public interface KlientService {
     ArrayList<Integer> findbyEmail(String email);
     void save(Klient klient);
     ArrayList<String> findLoginByID(Integer id);
+    ArrayList<Klient> findAll();
 }

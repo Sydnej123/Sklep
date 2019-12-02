@@ -24,9 +24,9 @@ public class Klient implements Serializable {
     @Column(length = 20)
     private String klient_ulica;
     @Column(nullable = false)
-    private int klient_nr_domu;
+    private Integer klient_nr_domu;
     @Column(nullable = false)
-    private int klient_nr_mieszkania;
+    private Integer klient_nr_mieszkania;
     private String klient_kod_pocztowy;
 
     @OneToMany(mappedBy = "klient")
@@ -96,21 +96,7 @@ public class Klient implements Serializable {
         this.klient_ulica = klient_ulica;
     }
 
-    public int getKlient_nr_domu() {
-        return klient_nr_domu;
-    }
 
-    public void setKlient_nr_domu(int klient_nr_domu) {
-        this.klient_nr_domu = klient_nr_domu;
-    }
-
-    public int getKlient_nr_mieszkania() {
-        return klient_nr_mieszkania;
-    }
-
-    public void setKlient_nr_mieszkania(int klient_nr_mieszkania) {
-        this.klient_nr_mieszkania = klient_nr_mieszkania;
-    }
 
     public String getKlient_kod_pocztowy() {
         return klient_kod_pocztowy;
@@ -126,5 +112,21 @@ public class Klient implements Serializable {
 
     public void setKomentarz(Set<Komentarz> komentarz) {
         this.komentarz = komentarz;
+    }
+
+    public Integer getKlient_nr_domu() {
+        return klient_nr_domu;
+    }
+
+    public void setKlient_nr_domu(Integer klient_nr_domu) {
+        this.klient_nr_domu = klient_nr_domu;
+    }
+
+    public Integer getKlient_nr_mieszkania() {
+        return klient_nr_mieszkania;
+    }
+
+    public void setKlient_nr_mieszkania(Integer klient_nr_mieszkania) {
+        this.klient_nr_mieszkania = klient_nr_mieszkania;
     }
 }

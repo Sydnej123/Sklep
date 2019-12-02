@@ -38,4 +38,13 @@ public class KlientServiceImp implements KlientService{
         return klientRepository.getLoginByID(id);
     }
 
+    @Override
+    public ArrayList<Klient> findAll() {
+        ArrayList<Klient> temp = new ArrayList<>();
+        for(Klient k: klientRepository.findAll()){
+            temp.add(k);
+        }
+        return temp;
+    }
+
 }

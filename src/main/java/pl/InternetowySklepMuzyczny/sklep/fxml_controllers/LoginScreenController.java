@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import pl.InternetowySklepMuzyczny.sklep.Session;
 import pl.InternetowySklepMuzyczny.sklep.models.Klient;
 import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
+import pl.InternetowySklepMuzyczny.sklep.services.PracownikServiceImp;
 
 import java.io.*;
 import java.net.URL;
@@ -64,8 +65,15 @@ public class LoginScreenController implements Initializable {
     Label registrationErrorLabel;
     @FXML
     Button registrationButton;
+    @FXML
+    TextField pracownikID;
+    @FXML
+    PasswordField pracownikKod;
+
     @Autowired
     private KlientServiceImp klientService;
+    @Autowired
+    private PracownikServiceImp pracownikServiceImp;
 
     private final static  String SHORT_LOGIN_FIELD = "Zbyt krótki login";
     private final static String SHORT_PASSWORD_FIELD = "Zbyt krótkie hasło";
@@ -254,6 +262,30 @@ public class LoginScreenController implements Initializable {
         } catch (FileNotFoundException e) {
 
         } catch (IOException e) {
+
+        }
+    }
+    public void openAdminPanel(){
+        Pattern numeric = Pattern.compile("([0-9])+");
+
+        if(pracownikID.getText() != null && pracownikKod.getText() !=null && numeric.matcher(pracownikID.getText()).matches()) {
+            if(Integer.parseInt(pracownikID.getText()) > 0 && pracownikServiceImp.getPracownikByID(Integer.valueOf(pracownikID.getText())).get(0).getPracownik_kod().equals(pracownikKod.getText())){
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/admin_panel.fxml"));
+                fxmlLoader.setControllerFactory(springContext::getBean);
+                Parent root = null;
+                try {
+                    root = fxmlLoader.load();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Stage stage = new Stage();
+                stage.setTitle("Sklep internetowy - panel administratora");
+                stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/icons/shopping.png")));
+                stage.setScene(new Scene(root, 1280, 720));
+                stage.show();
+                Stage stageToClose = (Stage) goForwardButton.getScene().getWindow();
+                stageToClose.close();
+            }
 
         }
     }

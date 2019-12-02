@@ -242,7 +242,4 @@ public class MainScreenController  implements Initializable {
         explorerScrollPane.setContent(explorerGrid);
 
     }
-    public void openAdminWindow(){
-
-    }
 }
