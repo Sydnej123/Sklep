@@ -1,6 +1,9 @@
 package pl.InternetowySklepMuzyczny.sklep.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -8,7 +11,8 @@ public class Pracownik {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int pracownik_id;
-
+    @OneToMany(mappedBy = "pracownik")
+    List<Zamowienie> zamowienia = new ArrayList<>();
     @Column(length = 20)
     String pracownik_imie;
     @Column(length = 20)

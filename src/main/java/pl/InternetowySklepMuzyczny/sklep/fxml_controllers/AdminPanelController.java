@@ -1,5 +1,11 @@
 package pl.InternetowySklepMuzyczny.sklep.fxml_controllers;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -7,10 +13,8 @@ import javafx.scene.paint.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import pl.InternetowySklepMuzyczny.sklep.models.Klient;
-import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
-import pl.InternetowySklepMuzyczny.sklep.services.PracownikServiceImp;
-import pl.InternetowySklepMuzyczny.sklep.services.ZespolServiceImp;
+import pl.InternetowySklepMuzyczny.sklep.models.*;
+import pl.InternetowySklepMuzyczny.sklep.services.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +25,10 @@ import java.util.stream.Collectors;
 public class AdminPanelController {
 
     @FXML
-    TitledPane editClientsTab;
+    TitledPane editClientsTab, clientOrderPane;
 
     @FXML
-    TableView editClientTable;
+    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable;
 
     @FXML
     TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField;
@@ -35,6 +39,11 @@ public class AdminPanelController {
     Label errorLabel;
     @FXML
     Button filterButton;
+
+    @FXML
+    ChoiceBox klientChoise;
+
+
     @Autowired
     ZespolServiceImp zespolServiceImp;
 
@@ -44,6 +53,14 @@ public class AdminPanelController {
     @Autowired
     KlientServiceImp klientServiceImp;
 
+    @Autowired
+    ZamowienieServiceImp zamowienieServiceImp;
+
+    @Autowired
+    Szczegoly_zamowieniaServiceImp szczegoly_zamowieniaServiceImp;
+    @Autowired
+    AlbumServiceImp albumServiceImp;
+    private boolean firstTime= true;
     public void insertNewClient(){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         Pattern numeric = Pattern.compile("([0-9])+");
@@ -117,14 +134,109 @@ public class AdminPanelController {
             tempFilteredClients.add(k);
         }
         filtered = tempFilteredClients.stream()
-                .filter(klient -> klient.getKlient_login().equals((filterLogin.getText().isEmpty()?klient.getKlient_login():filterLogin.getText())))
-                .filter(klient -> klient.getKlient_imie().equals((filterName.getText().isEmpty()?((klient.getKlient_imie() == null)?filterName.getText():klient.getKlient_imie()):filterName.getText())))
-                .filter(klient -> klient.getKlient_nazwisko().equals((filterSecondName.getText().isEmpty()?((klient.getKlient_nazwisko() == null)?filterSecondName.getText():klient.getKlient_nazwisko()):filterSecondName.getText())))
-                .filter(klient -> klient.getKlient_miasto().equals((filterCity.getText().isEmpty()?klient.getKlient_miasto():filterCity.getText())) )
-                .filter(klient -> klient.getKlient_kod_pocztowy().equals((filterZipCode.getText().isEmpty()?klient.getKlient_kod_pocztowy():filterZipCode.getText())))
+                .filter(klient -> filterLogin.getText().isEmpty() || (klient.getKlient_login() == null)? true: (klient.getKlient_login().equals(filterLogin.getText())))
+                .filter(klient -> filterName.getText().isEmpty() || (klient.getKlient_imie() == null)? true: (klient.getKlient_imie().equals(filterName.getText())))
+                .filter(klient -> filterSecondName.getText().isEmpty() || (klient.getKlient_nazwisko() == null)? true: (klient.getKlient_nazwisko().equals(filterSecondName.getText())))
+                .filter(klient -> filterCity.getText().isEmpty() || (klient.getKlient_miasto() == null)? true: (klient.getKlient_miasto().equals(filterCity.getText())))
+                .filter(klient -> filterZipCode.getText().isEmpty() || (klient.getKlient_kod_pocztowy() == null)? true: (klient.getKlient_kod_pocztowy().equals(filterZipCode.getText())))
                 .collect(Collectors.toList());
         editClientTable.getItems().clear();
+        filterZipCode.clear();
+        filterCity.clear();
+        filterLogin.clear();
+        filterSecondName.clear();
+        filterName.clear();
         editClientTable.getItems().addAll(filtered);
+    }
+    public void initializeClientOrder(){
+
+        klientChoise.getItems().clear();
+        List<Klient> klients = klientServiceImp.findAll();
+        for(Klient klient:klients){
+            klientChoise.getItems().add(klient);
+        }
+        klientChoise.setValue(klients.get(0));
+        showResults();
+        clientOrderTable.getItems().clear();
+        clientOrderTable.getItems().addAll(zamowienieServiceImp.getOrderByClientId(1));
+
+        klientChoise.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                Klient temporary = (Klient) klientChoise.getValue();
+                showResults();
+                clientOrderTable.getItems().clear();
+                clientOrderTable.getItems().addAll(zamowienieServiceImp.getOrderByClientId(temporary.getKlient_id()));
+            }
+
+
+        });
+        if(firstTime){
+            clientOrderTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    Zamowienie temporary = (Zamowienie) newSelection;
+                    orderDetailsFill(temporary.getZamowienie_id());
+                }
+            });
+        }
+        firstTime = false;
+
+    }
+    public void showResults(){
+        if(clientOrderTable.getColumns().isEmpty()) {
+            TableColumn<Zamowienie, String> idColumn = new TableColumn<>("Id");
+            TableColumn<Zamowienie, String> workerColumn = new TableColumn<>("Pracownik");
+            TableColumn<Zamowienie, String> clientColumn = new TableColumn<>("Klient");
+            TableColumn<Zamowienie, String> valueColumn = new TableColumn<>("Wartość");
+            TableColumn<Zamowienie, String> commentColumn = new TableColumn<>("Komentarz");
+            TableColumn<Zamowienie, String> dateColumn = new TableColumn<>("Data");
+            //  TableColumn<Zamowienie, String> detailsColumn = new TableColumn<>("Szczegóły");
+
+            idColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
+            workerColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_imie())));
+            clientColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getKlient_id())));
+            valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
+            commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
+            dateColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getZamowienie_data().toString())));
+            // detailsColumn.setCellValueFactory(new PropertyValueFactory(""));
+            clientOrderTable.getColumns().addAll(idColumn, workerColumn, clientColumn, valueColumn, commentColumn, dateColumn);
+        }
+
+    }
+    public void orderDetailsFill(Integer orderID){
+        if(orderDetailsTable.getColumns().isEmpty()){
+            TableColumn<Szczegoly_zamowienia, String> nameColumn = new TableColumn<>("Nazwa albumu");
+            TableColumn<Szczegoly_zamowienia, String> countColumn = new TableColumn<>("Ilość");
+            orderDetailsTable.getColumns().addAll(nameColumn,countColumn);
+            nameColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getCompositePrimaryKeySzcze_zam().getAlbum_id()).get(0).getAlbum_nazwa())));
+            countColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getSzcze_zam_ilosc())));
+        }
+        orderDetailsTable.getItems().clear();
+        orderDetailsTable.getItems().addAll(szczegoly_zamowieniaServiceImp.findByZamowienieId(orderID));
+    }
+
+    public void clientRankingFill(){
+        if(bestClientsTable.getColumns().isEmpty()){
+            TableColumn<Klient, String> idColumn = new TableColumn<>("Id");
+            TableColumn<Klient, String> loginColumn = new TableColumn<>("Login");
+            TableColumn<Klient, String> imieColumn = new TableColumn<>("Imie");
+            TableColumn<Klient, String> nazwiskoColumn = new TableColumn<>("Nazwisko");
+            TableColumn<Klient, String> emailColumn = new TableColumn<>("E-mail");
+            TableColumn<Klient, String> orderCountColumn = new TableColumn<>("Ilość zamówień");
+
+
+
+            idColumn.setCellValueFactory(new PropertyValueFactory("klient_id"));
+            loginColumn.setCellValueFactory(new PropertyValueFactory("klient_login"));
+            imieColumn.setCellValueFactory(new PropertyValueFactory("klient_imie"));
+            nazwiskoColumn.setCellValueFactory(new PropertyValueFactory("klient_nazwisko"));
+            emailColumn.setCellValueFactory(new PropertyValueFactory("klient_email"));
+            orderCountColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(zamowienieServiceImp.getOrderCountById(c.getValue().getKlient_id()))));
+            bestClientsTable.getColumns().addAll(idColumn, loginColumn,imieColumn, nazwiskoColumn, emailColumn, orderCountColumn);
+        }
+            bestClientsTable.getItems().clear();
+            bestClientsTable.getItems().addAll(klientServiceImp.getOrderedClients());// wszyscy uzytkownicy po najwiekszej ilosc izamowien
+        System.out.println(zamowienieServiceImp.getOrderByClientId(1));
     }
 
 }

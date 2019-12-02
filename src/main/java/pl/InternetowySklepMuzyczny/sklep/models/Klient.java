@@ -129,4 +129,21 @@ public class Klient implements Serializable {
     public void setKlient_nr_mieszkania(Integer klient_nr_mieszkania) {
         this.klient_nr_mieszkania = klient_nr_mieszkania;
     }
+
+    @Override
+    public String toString() {
+        return "Klient{" +
+                "klient_id=" + klient_id +
+                ", klient_imie='" + klient_imie + '\'' +
+                ", klient_nazwisko='" + klient_nazwisko + '\'' +
+                ", klient_login='" + klient_login + '\'' +
+                ", klient_haslo='" + klient_haslo + '\'' +
+                ", klient_email='" + klient_email + '\'' +
+                ", klient_miasto='" + klient_miasto + '\'' +
+                ", klient_ulica='" + klient_ulica + '\'' +
+                ", klient_nr_domu=" + klient_nr_domu +
+                ", klient_nr_mieszkania=" + klient_nr_mieszkania +
+                ", klient_kod_pocztowy='" + klient_kod_pocztowy + '\'' +
+                '}';
+    }
 }

@@ -15,7 +15,7 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.AdminPanelController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.AdminPanelController">
   <tabs>
     <Tab text="Klienci">
       <content>
@@ -70,34 +70,20 @@
                                  </children></AnchorPane>
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" prefHeight="0.0" prefWidth="1276.0" text="Zamówienia poszczególnych klientów">
+                      <TitledPane fx:id="clientOrderPane" animated="false" onMouseClicked="#initializeClientOrder" prefHeight="0.0" prefWidth="1276.0" text="Zamówienia poszczególnych klientów">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <ChoiceBox layoutX="14.0" layoutY="41.0" prefWidth="150.0" />
+                                    <ChoiceBox fx:id="klientChoise" layoutX="14.0" layoutY="41.0" prefHeight="25.0" prefWidth="321.0" />
                                     <Label layoutX="14.0" layoutY="24.0" text="Wybierz klienta:" />
                                     <ScrollPane layoutX="3.0" layoutY="80.0">
                                        <content>
-                                          <TableView prefHeight="268.0" prefWidth="1267.0">
-                                             <columns>
-                                                <TableColumn prefWidth="75.0" text="Id" />
-                                                <TableColumn prefWidth="143.0" text="Pracownik" />
-                                                <TableColumn minWidth="7.0" prefWidth="149.0" text="Klient" />
-                                                <TableColumn prefWidth="176.0" text="Wartość" />
-                                                <TableColumn prefWidth="295.0" text="Komentarz" />
-                                                <TableColumn prefWidth="247.0" text="Data" />
-                                                <TableColumn prefWidth="181.0" text="Szczegóły " />
-                                             </columns>
-                                          </TableView>
+                                          <TableView fx:id="clientOrderTable" prefHeight="268.0" prefWidth="1267.0" />
                                        </content>
                                     </ScrollPane>
                                     <ScrollPane layoutX="5.0" layoutY="388.0">
                                        <content>
-                                          <TableView prefHeight="200.0" prefWidth="442.0">
-                                            <columns>
-                                              <TableColumn prefWidth="229.0" text="Nazwa albumu" />
-                                              <TableColumn minWidth="0.0" prefWidth="207.0" text="Ilość" />
-                                            </columns>
+                                          <TableView fx:id="orderDetailsTable" prefHeight="200.0" prefWidth="442.0">
                                              <padding>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                              </padding>
@@ -108,28 +94,13 @@
                                  </children></AnchorPane>
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" prefHeight="649.0" prefWidth="1283.0" text="Najaktywniejsi klienci">
+                      <TitledPane animated="false" onMouseClicked="#clientRankingFill" prefHeight="649.0" prefWidth="1283.0" text="Najaktywniejsi klienci">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
                                     <ScrollPane>
                                        <content>
-                                          <TableView prefHeight="450.0" prefWidth="1274.0">
-                                             <columns>
-                                                <TableColumn prefWidth="75.0" text="Id" />
-                                                <TableColumn prefWidth="75.0" text="Login" />
-                                                <TableColumn prefWidth="75.0" text="Hasło" />
-                                                <TableColumn prefWidth="100.0" text="Imie" />
-                                                <TableColumn prefWidth="95.0" text="Nazwisko" />
-                                                <TableColumn prefWidth="113.0" text="E-mail" />
-                                                <TableColumn prefWidth="101.0" text="Miasto" />
-                                                <TableColumn prefWidth="117.0" text="Ulica" />
-                                                <TableColumn prefWidth="109.0" text="Numer domu" />
-                                                <TableColumn prefWidth="138.0" text="Numer mieszkania" />
-                                                <TableColumn prefWidth="126.0" text="Kod pocztowy" />
-                                                <TableColumn prefWidth="148.0" text="Ilość zamówień" />
-                                             </columns>
-                                          </TableView>
+                                          <TableView fx:id="bestClientsTable" prefHeight="450.0" prefWidth="1274.0" />
                                        </content>
                                     </ScrollPane>
                                  </children></AnchorPane>

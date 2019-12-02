@@ -1,9 +1,27 @@
 package pl.InternetowySklepMuzyczny.sklep.models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 @Entity
 public class Album {
+    public List<Komentarz> getKomentarz() {
+        return komentarz;
+    }
+
+    public void setKomentarz(List<Komentarz> komentarz) {
+        this.komentarz = komentarz;
+    }
+
+    public List<Szczegoly_zamowienia> getSzczegoly_zamowienia() {
+        return szczegoly_zamowienia;
+    }
+
+    public void setSzczegoly_zamowienia(List<Szczegoly_zamowienia> szczegoly_zamowienia) {
+        this.szczegoly_zamowienia = szczegoly_zamowienia;
+    }
+
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int album_id;
@@ -15,10 +33,10 @@ public class Album {
     private Zespol zespol;
 
     @OneToMany(mappedBy="album")
-    private Set<Komentarz> komentarz;
+    private List<Komentarz> komentarz = new ArrayList<>();
 
     @OneToMany(mappedBy = "album")
-    Set<Szczegoly_zamowienia> szczegoly_zamowienia;
+    List<Szczegoly_zamowienia> szczegoly_zamowienia= new ArrayList<>();
 
 
     @Column(nullable=false,length = 30)
@@ -53,21 +71,7 @@ public class Album {
         this.zespol = zespol;
     }
 
-    public Set<Komentarz> getKomentarz() {
-        return komentarz;
-    }
 
-    public void setKomentarz(Set<Komentarz> komentarz) {
-        this.komentarz = komentarz;
-    }
-
-    public Set<Szczegoly_zamowienia> getSzczegoly_zamowienia() {
-        return szczegoly_zamowienia;
-    }
-
-    public void setSzczegoly_zamowienia(Set<Szczegoly_zamowienia> szczegoly_zamowienia) {
-        this.szczegoly_zamowienia = szczegoly_zamowienia;
-    }
 
     public String getAlbum_nazwa() {
         return album_nazwa;

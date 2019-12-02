@@ -30,4 +30,20 @@ public class CompositePrimaryKeySzcze_zam implements Serializable {
     public int hashCode() {
         return Objects.hash(zamowienie_id, album_id);
     }
+
+    public int getZamowienie_id() {
+        return zamowienie_id;
+    }
+
+    public void setZamowienie_id(int zamowienie_id) {
+        this.zamowienie_id = zamowienie_id;
+    }
+
+    public int getAlbum_id() {
+        return album_id;
+    }
+
+    public void setAlbum_id(int album_id) {
+        this.album_id = album_id;
+    }
 }

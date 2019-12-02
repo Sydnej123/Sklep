@@ -47,4 +47,9 @@ public class KlientServiceImp implements KlientService{
         return temp;
     }
 
+    @Override
+    public ArrayList<Klient> getOrderedClients() {
+        return klientRepository.getOrderedClients();
+    }
+
 }

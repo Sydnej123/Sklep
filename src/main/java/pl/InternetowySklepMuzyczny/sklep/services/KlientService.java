@@ -11,4 +11,5 @@ public interface KlientService {
     void save(Klient klient);
     ArrayList<String> findLoginByID(Integer id);
     ArrayList<Klient> findAll();
+    ArrayList<Klient> getOrderedClients();
 }
