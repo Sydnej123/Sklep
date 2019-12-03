@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import pl.InternetowySklepMuzyczny.sklep.models.Zespol;
 import pl.InternetowySklepMuzyczny.sklep.repositories.ZespolRepository;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 @Service
@@ -19,6 +18,11 @@ public class ZespolServiceImp implements ZespolService {
             temp.add(zespol);
         }
         return temp;
+    }
+
+    @Override
+    public void save(Zespol zespol) {
+        zespolRepository.save(zespol);
     }
 
 

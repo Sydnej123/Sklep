@@ -1,11 +1,8 @@
 package pl.InternetowySklepMuzyczny.sklep.fxml_controllers;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -28,22 +25,24 @@ public class AdminPanelController {
     TitledPane editClientsTab, clientOrderPane, albumsEditPane;
 
     @FXML
-    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable;
+    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable, allAlbumsTable, bandsTable, genreTable, employeesTable;
 
     @FXML
-    TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField;
+    TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField, addGenreField,
+            addEmployeeNameField, addEmployeeSecondNameField, addEmployeeVerificationCodeField;
 
     @FXML
-    TextField filterLogin, filterName, filterSecondName, filterCity, filterZipCode;
+    TextField filterLogin, filterName, filterSecondName, filterCity, filterZipCode, addAlbumNazwa, addAlbumIlosc, addAlbumCena, addAlbumSciezka, addZespolField;
     @FXML
     Label errorLabel;
     @FXML
     Button filterButton;
 
     @FXML
-    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter;
+    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox;
 
-
+    @FXML
+    TextArea opisTextArea;
     @Autowired
     ZespolServiceImp zespolServiceImp;
 
@@ -151,8 +150,9 @@ public class AdminPanelController {
         editClientTable.getItems().addAll(filtered);
     }
     public void initializeClientOrder(){
+            klientChoise.getItems().clear();
 
-        klientChoise.getItems().clear();
+
         List<Klient> klients = klientServiceImp.findAll();
         for(Klient klient:klients){
             klientChoise.getItems().add(klient);
@@ -210,7 +210,7 @@ public class AdminPanelController {
             TableColumn<Szczegoly_zamowienia, String> nameColumn = new TableColumn<>("Nazwa albumu");
             TableColumn<Szczegoly_zamowienia, String> countColumn = new TableColumn<>("Ilość");
             orderDetailsTable.getColumns().addAll(nameColumn,countColumn);
-            nameColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getCompositePrimaryKeySzcze_zam().getAlbum_id()).get(0).getAlbum_nazwa())));
+            nameColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getCompositePrimaryKeySzcze_zam().getAlbum_id()).getAlbum_nazwa())));
             countColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getSzcze_zam_ilosc())));
         }
         orderDetailsTable.getItems().clear();
@@ -261,7 +261,8 @@ public class AdminPanelController {
             zespolTableFilter.getItems().add(null);
             gatunekTableFilter.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
             gatunekTableFilter.getItems().add(null);
-
+            addAlbumZespol.getItems().addAll(zespolServiceImp.findAll());
+            addAlbumGatunek.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
 
         }
         albumEditTable.getItems().clear();
@@ -270,10 +271,140 @@ public class AdminPanelController {
 
         }
         public void filterAlbums(){
-        List<Album> filteredAlbums = albumEditTable.getItems();
+        List<Album> filteredAlbums = albumServiceImp.findAll();
         Zespol temporaryZespol = (Zespol) zespolTableFilter.getValue();
         Gatunek_muzyki temporaryGatunek = (Gatunek_muzyki) gatunekTableFilter.getValue();
-        filteredAlbums = filteredAlbums.stream().filter(c -> (temporaryZespol==null)?c.getZespol().getZespol_id():temporaryZespol.getZespol_id()==c.getZespol().getZespol_id());
+        filteredAlbums = filteredAlbums.stream().filter(c -> ((temporaryZespol==null)?c.getZespol().getZespol_id():temporaryZespol.getZespol_id())==c.getZespol().getZespol_id())
+                .filter(c -> ((temporaryGatunek==null)?c.getGatunek_muzyki().getGatunek_id():temporaryGatunek.getGatunek_id())==c.getGatunek_muzyki().getGatunek_id())
+                .collect(Collectors.toList());
+        albumEditTable.getItems().clear();
+        albumEditTable.getItems().addAll(filteredAlbums);
         }
+
+        public void addAlbum(){
+           if(addAlbumZespol.getValue()!=null && addAlbumGatunek.getValue() != null && addAlbumNazwa.getText() != null && addAlbumIlosc.getText() != null && addAlbumCena.getText() != null && addAlbumSciezka.getText() != null){
+               Album albumToAdd = new Album();
+               albumToAdd.setGatunek_muzyki((Gatunek_muzyki) addAlbumGatunek.getValue());
+               albumToAdd.setZespol((Zespol) addAlbumZespol.getValue());
+               albumToAdd.setAlbum_nazwa(addAlbumNazwa.getText());
+               albumToAdd.setAlbum_ilosc(Integer.parseInt(addAlbumIlosc.getText()));
+               albumToAdd.setAlbum_cena(Float.parseFloat(addAlbumCena.getText()));
+               albumToAdd.setAlbum_zdjecie_sciezka(addAlbumSciezka.getText());
+               albumToAdd.setAlbum_opis(opisTextArea.getText());
+               albumServiceImp.save(albumToAdd);
+               addAlbumSciezka.clear();
+               addAlbumNazwa.clear();
+               addAlbumIlosc.clear();
+               addAlbumCena.clear();
+               opisTextArea.clear();
+               gatunekTableFilter.setValue(null);
+               zespolTableFilter.setValue(null);
+               albumEditTable.getItems().add(albumToAdd);
+
+           }
+        }
+    public void listAllAlbums(){
+        if(allAlbumsTable.getColumns().isEmpty()){
+            // id Gatunek Zespól NAzwa labumu ilsoc cena
+            TableColumn<Album, String> idAlbumColumn = new TableColumn<>("Id");
+            TableColumn<Album, String> gatunekColumn = new TableColumn<>("Gatunek");
+            TableColumn<Album, String> zespolColumn = new TableColumn<>("Zespół");
+            TableColumn<Album, String> nazwaColumn = new TableColumn<>("Nazwa albumu");
+            TableColumn<Album, String> cenaColumn = new TableColumn<>("Cena");
+            TableColumn<Album, String> iloscColumn = new TableColumn<>("Ilość");
+
+            idAlbumColumn.setCellValueFactory(new PropertyValueFactory("album_id"));
+            gatunekColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getGatunek_muzyki().getGatunek_nazwa())));
+            zespolColumn.setCellValueFactory(C -> new ReadOnlyStringWrapper(String.valueOf(C.getValue().getZespol().getZespol_nazwa())));
+            nazwaColumn.setCellValueFactory(new PropertyValueFactory("album_nazwa"));
+            cenaColumn.setCellValueFactory(new PropertyValueFactory("album_cena"));
+            iloscColumn.setCellValueFactory(new PropertyValueFactory("album_ilosc"));
+            allAlbumsTable.getColumns().addAll(idAlbumColumn,gatunekColumn,zespolColumn,nazwaColumn,cenaColumn,iloscColumn);
+        }
+        allAlbumsTable.getItems().clear();
+        allAlbumsTable.getItems().addAll(albumServiceImp.findAll());
+    }
+    public void loadBands(){
+        if(bandsTable.getColumns().isEmpty()){
+            TableColumn<Zespol, String> bandIdColumn = new TableColumn<>("Id");
+            TableColumn<Zespol, String> bandNameColumn = new TableColumn<>("Nazwa zespołu");
+            bandIdColumn.setCellValueFactory(new PropertyValueFactory("zespol_id"));
+            bandNameColumn.setCellValueFactory(new PropertyValueFactory("zespol_nazwa"));
+            bandsTable.getColumns().addAll(bandIdColumn, bandNameColumn);
+        }
+        bandsTable.getItems().clear();
+        bandsTable.getItems().addAll(zespolServiceImp.findAll());
+
+
+    }
+    public void addBand(){
+        if(addZespolField.getText() != null){
+            Zespol zespolToAdd = new Zespol();
+            zespolToAdd.setZespol_nazwa(addZespolField.getText());
+            zespolServiceImp.save(zespolToAdd);
+            bandsTable.getItems().add(zespolToAdd);
+            addZespolField.clear();
+        }
+
+    }
+    public void loadGenre(){
+        if(genreTable.getColumns().isEmpty()){
+            TableColumn<Zespol, String> genreIdColumn = new TableColumn<>("Id");
+            TableColumn<Zespol, String> genreNameColumn = new TableColumn<>("Nazwa zespołu");
+            genreIdColumn.setCellValueFactory(new PropertyValueFactory("gatunek_id"));
+            genreNameColumn.setCellValueFactory(new PropertyValueFactory("gatunek_nazwa"));
+            genreTable.getColumns().addAll(genreIdColumn, genreNameColumn);
+        }
+        genreTable.getItems().clear();
+        genreTable.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
+
+    }
+    public void addGenre(){
+        if(addGenreField.getText() != null){
+            Gatunek_muzyki gatunek_muzyki = new Gatunek_muzyki();
+            gatunek_muzyki.setGatunek_nazwa(addGenreField.getText());
+            gatunek_muzykiServiceImp.save(gatunek_muzyki);
+            genreTable.getItems().add(gatunek_muzyki);
+            addZespolField.clear();
+        }
+
+    }
+    public void showAllEmployees(){
+        if(addEmployeePerrmisionsChoiseBox.getItems().isEmpty()){
+            addEmployeePerrmisionsChoiseBox.getItems().addAll(Integer.valueOf(0),Integer.valueOf(1),Integer.valueOf(2));
+        }
+
+        if(employeesTable.getColumns().isEmpty()){
+            TableColumn<Pracownik, String> employeeIdColumn = new TableColumn<>("Id");
+            TableColumn<Pracownik, String> employeeNameColumn = new TableColumn<>("Imie");
+            TableColumn<Pracownik, String> employeeSecondNameColumn = new TableColumn<>("Nazwa");
+            TableColumn<Pracownik, String> employeePermissionLevelColumn = new TableColumn<>("Poziom uprawnień");
+            TableColumn<Pracownik, String> employeeVerificationCodeColumn = new TableColumn<>("Kod weryfikacyjny");
+
+            employeeIdColumn.setCellValueFactory(new PropertyValueFactory("pracownik_id"));
+            employeeNameColumn.setCellValueFactory(new PropertyValueFactory("pracownik_imie"));
+            employeeSecondNameColumn.setCellValueFactory(new PropertyValueFactory("pracownik_nazwisko"));
+            employeePermissionLevelColumn.setCellValueFactory(new PropertyValueFactory("pracownik_poziom_uprawnien"));
+            employeeVerificationCodeColumn.setCellValueFactory(new PropertyValueFactory("pracownik_kod"));
+            employeesTable.getColumns().addAll(employeeIdColumn, employeeNameColumn, employeeSecondNameColumn, employeePermissionLevelColumn, employeeVerificationCodeColumn);
+        }
+        employeesTable.getItems().clear();
+        employeesTable.getItems().addAll(pracownikServiceImp.findAll());
+
+    }
+    public void addEmployee(){
+        if(addEmployeeNameField != null && addEmployeeSecondNameField != null && addEmployeeVerificationCodeField != null){
+            Pracownik pracownik = new Pracownik();
+            pracownik.setPracownik_imie(addEmployeeNameField.getText());
+            pracownik.setPracownik_nazwisko(addEmployeeSecondNameField.getText());
+            pracownik.setPracownik_poziom_uprawnien((Integer) addEmployeePerrmisionsChoiseBox.getValue());
+            pracownik.setPracownik_kod(addEmployeeVerificationCodeField.getText());
+            pracownikServiceImp.save(pracownik);
+            employeesTable.getItems().add(pracownik);
+            addEmployeeVerificationCodeField.clear();
+            addEmployeeSecondNameField.clear();
+            addEmployeeNameField.clear();
+        }
+    }
     }
 

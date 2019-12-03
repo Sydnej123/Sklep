@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface PracownikService {
     List<Pracownik> getPracownikByID(Integer id);
+    void save(Pracownik pracownik);
+    List<Pracownik> findAll();
 }

@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -127,13 +128,13 @@
                                        </content>
                                     </ScrollPane>
                                     <Label layoutX="14.0" layoutY="585.0" text="Dodaj album:" />
-                                    <TextField layoutX="469.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="680.0" />
-                                    <TextField layoutX="641.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="510.0" />
-                                    <TextField layoutX="803.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="340.0" />
-                                    <TextField layoutX="981.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="170.0" />
-                                    <Button layoutX="1184.0" layoutY="581.0" mnemonicParsing="false" text="Dodaj" AnchorPane.rightAnchor="100.0" />
-                                    <ChoiceBox layoutX="114.0" layoutY="581.0" prefWidth="150.0" />
-                                    <ChoiceBox layoutX="283.0" layoutY="581.0" prefWidth="150.0" />
+                                    <TextField fx:id="addAlbumNazwa" layoutX="469.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="680.0" />
+                                    <TextField fx:id="addAlbumIlosc" layoutX="641.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="510.0" />
+                                    <TextField fx:id="addAlbumCena" layoutX="803.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="340.0" />
+                                    <TextField fx:id="addAlbumSciezka" layoutX="981.0" layoutY="581.0" prefWidth="150.0" AnchorPane.rightAnchor="170.0" />
+                                    <Button fx:id="addButton" layoutX="1184.0" layoutY="581.0" mnemonicParsing="false" onAction="#addAlbum" text="Dodaj" AnchorPane.rightAnchor="100.0" />
+                                    <ChoiceBox fx:id="addAlbumGatunek" layoutX="114.0" layoutY="581.0" prefWidth="150.0" />
+                                    <ChoiceBox fx:id="addAlbumZespol" layoutX="283.0" layoutY="581.0" prefWidth="150.0" />
                                     <Label layoutX="14.0" layoutY="498.0" text="Filtruj:" />
                                     <Label layoutX="114.0" layoutY="479.0" text="Gatunek:" />
                                     <ChoiceBox fx:id="gatunekTableFilter" layoutX="114.0" layoutY="494.0" prefWidth="150.0" />
@@ -146,26 +147,19 @@
                                     <Label layoutX="638.0" layoutY="563.0" text="Ilość:" />
                                     <Label layoutX="802.0" layoutY="563.0" text="Cena:" />
                                     <Label layoutX="972.0" layoutY="563.0" prefHeight="17.0" prefWidth="109.0" text="Scieżka do zdjęcia:" />
+                                    <TextArea fx:id="opisTextArea" layoutX="630.0" layoutY="497.0" prefHeight="57.0" prefWidth="489.0" />
+                                    <Label layoutX="626.0" layoutY="479.0" text="Opis:" />
                                  </children>
                               </AnchorPane>
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" text="Magazyn">
+                      <TitledPane animated="false" onMouseClicked="#listAllAlbums" text="Magazyn">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
-                                    <ScrollPane>
+                                    <ScrollPane layoutY="8.0" prefHeight="623.0" prefWidth="1280.0">
                                        <content>
-                                          <TableView prefHeight="636.0" prefWidth="1280.0">
-                                             <columns>
-                                                <TableColumn prefWidth="100.0" text="Id" />
-                                                <TableColumn prefWidth="195.0" text="Gatunek" />
-                                                <TableColumn prefWidth="210.0" text="Zespół" />
-                                                <TableColumn prefWidth="305.0" text="Nazwa albumu" />
-                                                <TableColumn prefWidth="272.0" text="Ilość" />
-                                                <TableColumn prefWidth="197.0" text="Cena" />
-                                             </columns>
-                                          </TableView>
+                                          <TableView fx:id="allAlbumsTable" prefHeight="624.0" prefWidth="1277.0" />
                                        </content>
                                     </ScrollPane>
                                  </children>
@@ -177,29 +171,23 @@
                </children></AnchorPane>
       </content>
     </Tab>
-      <Tab text="Zespoły">
+      <Tab onSelectionChanged="#loadBands" text="Zespoły">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <ScrollPane>
                      <content>
-                        <TableView prefHeight="686.0" prefWidth="509.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="ID" />
-                            <TableColumn prefWidth="252.0" text="Nazwa zespołu" />
-                              <TableColumn prefWidth="181.0" text="Operacje" />
-                          </columns>
-                        </TableView>
+                        <TableView fx:id="bandsTable" prefHeight="686.0" prefWidth="509.0" />
                      </content>
                   </ScrollPane>
                   <Label layoutX="559.0" layoutY="75.0" text="Dodaj zespół:" />
-                  <Button layoutX="800.0" layoutY="71.0" mnemonicParsing="false" text="Dodaj" />
-                  <TextField layoutX="651.0" layoutY="71.0" />
+                  <Button layoutX="800.0" layoutY="71.0" mnemonicParsing="false" onAction="#addBand" text="Dodaj" />
+                  <TextField fx:id="addZespolField" layoutX="651.0" layoutY="71.0" />
                   <Label layoutX="651.0" layoutY="54.0" text="Nazwa zespołu:" />
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Gatunki muzyczne">
+      <Tab onSelectionChanged="#loadGenre" text="Gatunki muzyczne">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -207,51 +195,37 @@
                      <children>
                         <ScrollPane>
                            <content>
-                              <TableView prefHeight="686.0" prefWidth="509.0">
-                                 <columns>
-                                    <TableColumn prefWidth="75.0" text="ID" />
-                                    <TableColumn prefWidth="252.0" text="Nazwa gatunku" />
-                                    <TableColumn prefWidth="181.0" text="Operacje" />
-                                 </columns>
-                              </TableView>
+                              <TableView fx:id="genreTable" prefHeight="686.0" prefWidth="509.0" />
                            </content>
                         </ScrollPane>
                         <Label layoutX="559.0" layoutY="75.0" text="Dodaj gatunek:" />
-                        <Button layoutX="800.0" layoutY="71.0" mnemonicParsing="false" text="Dodaj" />
-                        <TextField layoutX="651.0" layoutY="71.0" />
+                        <Button layoutX="800.0" layoutY="71.0" mnemonicParsing="false" onAction="#addGenre" text="Dodaj" />
+                        <TextField fx:id="addGenreField" layoutX="651.0" layoutY="71.0" />
                         <Label layoutX="651.0" layoutY="54.0" text="Nazwa gatunku:" />
                      </children>
                   </AnchorPane>
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Pracownicy">
+      <Tab onSelectionChanged="#showAllEmployees" text="Pracownicy">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <ScrollPane>
                      <content>
-                        <TableView prefHeight="686.0" prefWidth="781.0">
-                           <columns>
-                              <TableColumn prefWidth="75.0" text="ID" />
-                              <TableColumn prefWidth="252.0" text="Imie" />
-                              <TableColumn prefWidth="181.0" text="Nazwisko" />
-                              <TableColumn prefWidth="144.0" text="Poziom uprawnień" />
-                              <TableColumn prefWidth="128.0" text="Kod weryfikacyjny" />
-                           </columns>
-                        </TableView>
+                        <TableView fx:id="employeesTable" prefHeight="686.0" prefWidth="781.0" />
                      </content>
                   </ScrollPane>
                   <Label layoutX="797.0" layoutY="91.0" text="Dodaj pracownika:" />
-                  <Button layoutX="1173.0" layoutY="219.0" mnemonicParsing="false" text="Dodaj" />
-                  <TextField layoutX="914.0" layoutY="87.0" />
-                  <TextField layoutX="1072.0" layoutY="87.0" />
-                  <TextField layoutX="1072.0" layoutY="153.0" />
+                  <Button layoutX="1173.0" layoutY="219.0" mnemonicParsing="false" onAction="#addEmployee" text="Dodaj" />
+                  <TextField fx:id="addEmployeeNameField" layoutX="914.0" layoutY="87.0" />
+                  <TextField fx:id="addEmployeeSecondNameField" layoutX="1072.0" layoutY="87.0" />
+                  <TextField fx:id="addEmployeeVerificationCodeField" layoutX="1072.0" layoutY="153.0" />
                   <Label layoutX="914.0" layoutY="70.0" text="Imie:" />
                   <Label layoutX="1072.0" layoutY="70.0" text="Nazwisko:" />
                   <Label layoutX="914.0" layoutY="136.0" text="Poziom uprawnień:" />
                   <Label layoutX="1072.0" layoutY="136.0" text="Kod weryfikacyjny:" />
-                  <ChoiceBox layoutX="913.0" layoutY="153.0" prefWidth="150.0" />
+                  <ChoiceBox fx:id="addEmployeePerrmisionsChoiseBox" layoutX="913.0" layoutY="153.0" prefWidth="150.0" />
                </children></AnchorPane>
         </content>
       </Tab>

@@ -3,7 +3,6 @@ package pl.InternetowySklepMuzyczny.sklep.models;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -18,6 +17,7 @@ public class Pracownik {
     @Column(length = 20)
     String pracownik_nazwisko;
     int pracownik_poziom_uprawnien;
+    String pracownik_kod;
 
     public String getPracownik_kod() {
         return pracownik_kod;
@@ -27,7 +27,6 @@ public class Pracownik {
         this.pracownik_kod = pracownik_kod;
     }
 
-    String pracownik_kod;
 
     public int getPracownik_id() {
         return pracownik_id;

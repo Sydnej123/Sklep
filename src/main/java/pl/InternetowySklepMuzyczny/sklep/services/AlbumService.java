@@ -9,5 +9,6 @@ public interface AlbumService {
     List<Album> findAll();
     List<Album> findByGenre(Integer id);
     Integer countBandAlbums(Integer bandID);
-    List<Album> findById(Integer id);
+    Album findById(Integer id);
+    void save(Album album);
 }

@@ -7,7 +7,6 @@ import pl.InternetowySklepMuzyczny.sklep.repositories.AlbumRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AlbumServiceImp implements AlbumService{
@@ -39,7 +38,12 @@ public class AlbumServiceImp implements AlbumService{
     }
 
     @Override
-    public List<Album> findById(Integer id) {
-        return albumRepository.findById(id).stream().collect(Collectors.toList());
+    public Album findById(Integer id) {
+        return albumRepository.findById(id).get();
+    }
+
+    @Override
+    public void save(Album album) {
+        albumRepository.save(album);
     }
 }

@@ -21,4 +21,9 @@ public class Gatunek_muzykiServiceImp implements  Gatunek_muzykiService{
         return result;
     }
 
+    @Override
+    public void save(Gatunek_muzyki gatunek_muzyki) {
+        gatunek_muzykiRepository.save(gatunek_muzyki);
+    }
+
 }
