@@ -257,20 +257,11 @@ public class AdminPanelController {
             sciezkaDoZdjeciaColumn.setCellValueFactory(new PropertyValueFactory("album_zdjecie_sciezka"));
             albumEditTable.getColumns().addAll(idAlbumColumn,gatunekColumn,zespolColumn,nazwaColumn,cenaColumn,opisColumn,sciezkaDoZdjeciaColumn,iloscColumn);
 
-            gatunekTableFilter.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
-            gatunekTableFilter.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    Gatunek_muzyki gatunek = (Gatunek_muzyki) gatunekTableFilter.getValue();
-                }
-            });
             zespolTableFilter.getItems().addAll(zespolServiceImp.findAll());
-            zespolTableFilter.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    Zespol zespol = (Zespol) zespolTableFilter.getValue();
-                }
-            });
+            zespolTableFilter.getItems().add(null);
+            gatunekTableFilter.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
+            gatunekTableFilter.getItems().add(null);
+
 
         }
         albumEditTable.getItems().clear();
@@ -280,8 +271,9 @@ public class AdminPanelController {
         }
         public void filterAlbums(){
         List<Album> filteredAlbums = albumEditTable.getItems();
-
-       // filteredAlbums = filteredAlbums.stream().filter();
+        Zespol temporaryZespol = (Zespol) zespolTableFilter.getValue();
+        Gatunek_muzyki temporaryGatunek = (Gatunek_muzyki) gatunekTableFilter.getValue();
+        filteredAlbums = filteredAlbums.stream().filter(c -> (temporaryZespol==null)?c.getZespol().getZespol_id():temporaryZespol.getZespol_id()==c.getZespol().getZespol_id());
         }
     }
 
