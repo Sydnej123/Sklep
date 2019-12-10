@@ -10,12 +10,14 @@ import javafx.scene.paint.Color;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import pl.InternetowySklepMuzyczny.sklep.StatusZamowienia;
 import pl.InternetowySklepMuzyczny.sklep.models.*;
 import pl.InternetowySklepMuzyczny.sklep.services.*;
 
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,24 +31,28 @@ public class AdminPanelController {
     TitledPane editClientsTab, clientOrderPane, albumsEditPane;
 
     @FXML
-    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable, allAlbumsTable, bandsTable, genreTable, employeesTable, songTable, commentsTable;
+    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable, allAlbumsTable, bandsTable, genreTable, employeesTable, songTable, commentsTable, missingAlbums, ordersToPrepareTable, ordersToPrepareDetails
+            ,ordersDoneTable;
 
     @FXML
     TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField, addGenreField,
             addEmployeeNameField, addEmployeeSecondNameField, addEmployeeVerificationCodeField;
 
     @FXML
-    TextField filterLogin, filterName, filterSecondName, filterCity, filterZipCode, addAlbumNazwa, addAlbumIlosc, addAlbumCena, addAlbumSciezka, addZespolField, addSongNameTextField, addSongDuraction;
+    TextField filterLogin, filterName, filterSecondName, filterCity, filterZipCode, addAlbumNazwa, addAlbumIlosc, addAlbumCena, addAlbumSciezka, addZespolField, addSongNameTextField, addSongDuraction, minValue, maxValue;
     @FXML
     Label errorLabel;
     @FXML
     Button filterButton;
 
     @FXML
-    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox, addSongAlbumChoiseBox;
+    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox, addSongAlbumChoiseBox, commentAlbumChoiseBox, orderStatusChoiseBox, employeeChoiseBox, clientChoiseBox;
 
     @FXML
     TextArea opisTextArea;
+    @FXML
+    DatePicker dateFrom, dateTo;
+
     @Autowired
     ZespolServiceImp zespolServiceImp;
 
@@ -69,85 +75,88 @@ public class AdminPanelController {
     UtworServiceImp utworServiceImp;
     @Autowired
     KomentarzServiceImp komentarzServiceImp;
-    private boolean firstTime= true;
-    public void insertNewClient(){
+    private boolean firstTime = true;
+    private boolean addedListener = true;
+
+    public void insertNewClient() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         Pattern numeric = Pattern.compile("([0-9])+");
         Klient klient = new Klient();
-    if(!loginAddField.getText().isEmpty() && !passwordAddField.getText().isEmpty() && !emailAddField.getText().isEmpty() && numeric.matcher(houseNumberAddField.getText()).matches() && numeric.matcher(flatNumberAddField.getText()).matches()){
-       klient.setKlient_login(loginAddField.getText());
-       klient.setKlient_haslo(encoder.encode(passwordAddField.getText()));
-       klient.setKlient_email(emailAddField.getText());
-       klient.setKlient_imie(nameAddField.getText());
-       klient.setKlient_nazwisko(secondnameAddField.getText());
-       klient.setKlient_miasto(cityAddField.getText());
-       klient.setKlient_ulica(streetAddField.getText());
-       klient.setKlient_nr_domu(Integer.parseInt(houseNumberAddField.getText()));
-       klient.setKlient_nr_mieszkania(Integer.parseInt(flatNumberAddField.getText()));
-       klient.setKlient_kod_pocztowy(zipCodeAddField.getText());
-       loginAddField.clear();
-       passwordAddField.clear();
-       emailAddField.clear();
-       nameAddField.clear();
-       secondnameAddField.clear();
-       cityAddField.clear();
-       streetAddField.clear();
-       houseNumberAddField.clear();
-       flatNumberAddField.clear();
-       zipCodeAddField.clear();
-       editClientTable.getItems().add(klient);
-       klientServiceImp.save(klient);
-       errorLabel.setVisible(false);
-    }else{
-        errorLabel.setText("Błąd wprowadzania danych");
-        errorLabel.setTextFill(Color.RED);
-        errorLabel.setVisible(true);
+        if (!loginAddField.getText().isEmpty() && !passwordAddField.getText().isEmpty() && !emailAddField.getText().isEmpty() && numeric.matcher(houseNumberAddField.getText()).matches() && numeric.matcher(flatNumberAddField.getText()).matches()) {
+            klient.setKlient_login(loginAddField.getText());
+            klient.setKlient_haslo(encoder.encode(passwordAddField.getText()));
+            klient.setKlient_email(emailAddField.getText());
+            klient.setKlient_imie(nameAddField.getText());
+            klient.setKlient_nazwisko(secondnameAddField.getText());
+            klient.setKlient_miasto(cityAddField.getText());
+            klient.setKlient_ulica(streetAddField.getText());
+            klient.setKlient_nr_domu(Integer.parseInt(houseNumberAddField.getText()));
+            klient.setKlient_nr_mieszkania(Integer.parseInt(flatNumberAddField.getText()));
+            klient.setKlient_kod_pocztowy(zipCodeAddField.getText());
+            loginAddField.clear();
+            passwordAddField.clear();
+            emailAddField.clear();
+            nameAddField.clear();
+            secondnameAddField.clear();
+            cityAddField.clear();
+            streetAddField.clear();
+            houseNumberAddField.clear();
+            flatNumberAddField.clear();
+            zipCodeAddField.clear();
+            editClientTable.getItems().add(klient);
+            klientServiceImp.save(klient);
+            errorLabel.setVisible(false);
+        } else {
+            errorLabel.setText("Błąd wprowadzania danych");
+            errorLabel.setTextFill(Color.RED);
+            errorLabel.setVisible(true);
+        }
     }
-    }
-    public void insertDataIntoClientTable(){
 
-    if(editClientTable.getColumns().isEmpty()) {
-        TableColumn<Klient, String> idColumn = new TableColumn<>("Id");
-        TableColumn<Klient, String> loginColumn = new TableColumn<>("Login");
-        TableColumn<Klient, String> hasloColumn = new TableColumn<>("Hasło");
-        TableColumn<Klient, String> imieColumn = new TableColumn<>("Imie");
-        TableColumn<Klient, String> nazwiskoColumn = new TableColumn<>("Nazwisko");
-        TableColumn<Klient, String> emailColumn = new TableColumn<>("E-mail");
-        TableColumn<Klient, String> miastoColumn = new TableColumn<>("Miasto");
-        TableColumn<Klient, String> ulicaColumn = new TableColumn<>("Ulica");
-        TableColumn<Klient, String> nrdomuColumn = new TableColumn<>("Numer domu");
-        TableColumn<Klient, String> nrmieszkaniaColumn = new TableColumn<>("Numer mieszkania");
-        TableColumn<Klient, String> kodpocztowyColumn = new TableColumn<>("Kod pocztowy");
+    public void insertDataIntoClientTable() {
 
-        idColumn.setCellValueFactory(new PropertyValueFactory("klient_id"));
-        loginColumn.setCellValueFactory(new PropertyValueFactory("klient_login"));
-        hasloColumn.setCellValueFactory(new PropertyValueFactory("klient_haslo"));
-        imieColumn.setCellValueFactory(new PropertyValueFactory("klient_imie"));
-        nazwiskoColumn.setCellValueFactory(new PropertyValueFactory("klient_nazwisko"));
-        emailColumn.setCellValueFactory(new PropertyValueFactory("klient_email"));
-        miastoColumn.setCellValueFactory(new PropertyValueFactory("klient_miasto"));
-        ulicaColumn.setCellValueFactory(new PropertyValueFactory("klient_ulica"));
-        nrdomuColumn.setCellValueFactory(new PropertyValueFactory("klient_nr_domu"));
-        nrmieszkaniaColumn.setCellValueFactory(new PropertyValueFactory("klient_nr_mieszkania"));
-        kodpocztowyColumn.setCellValueFactory(new PropertyValueFactory("klient_kod_pocztowy"));
-        editClientTable.getColumns().addAll(idColumn, loginColumn, hasloColumn, imieColumn, nazwiskoColumn, emailColumn, miastoColumn, ulicaColumn, nrdomuColumn, nrmieszkaniaColumn, kodpocztowyColumn);
-    }
+        if (editClientTable.getColumns().isEmpty()) {
+            TableColumn<Klient, String> idColumn = new TableColumn<>("Id");
+            TableColumn<Klient, String> loginColumn = new TableColumn<>("Login");
+            TableColumn<Klient, String> hasloColumn = new TableColumn<>("Hasło");
+            TableColumn<Klient, String> imieColumn = new TableColumn<>("Imie");
+            TableColumn<Klient, String> nazwiskoColumn = new TableColumn<>("Nazwisko");
+            TableColumn<Klient, String> emailColumn = new TableColumn<>("E-mail");
+            TableColumn<Klient, String> miastoColumn = new TableColumn<>("Miasto");
+            TableColumn<Klient, String> ulicaColumn = new TableColumn<>("Ulica");
+            TableColumn<Klient, String> nrdomuColumn = new TableColumn<>("Numer domu");
+            TableColumn<Klient, String> nrmieszkaniaColumn = new TableColumn<>("Numer mieszkania");
+            TableColumn<Klient, String> kodpocztowyColumn = new TableColumn<>("Kod pocztowy");
+
+            idColumn.setCellValueFactory(new PropertyValueFactory("klient_id"));
+            loginColumn.setCellValueFactory(new PropertyValueFactory("klient_login"));
+            hasloColumn.setCellValueFactory(new PropertyValueFactory("klient_haslo"));
+            imieColumn.setCellValueFactory(new PropertyValueFactory("klient_imie"));
+            nazwiskoColumn.setCellValueFactory(new PropertyValueFactory("klient_nazwisko"));
+            emailColumn.setCellValueFactory(new PropertyValueFactory("klient_email"));
+            miastoColumn.setCellValueFactory(new PropertyValueFactory("klient_miasto"));
+            ulicaColumn.setCellValueFactory(new PropertyValueFactory("klient_ulica"));
+            nrdomuColumn.setCellValueFactory(new PropertyValueFactory("klient_nr_domu"));
+            nrmieszkaniaColumn.setCellValueFactory(new PropertyValueFactory("klient_nr_mieszkania"));
+            kodpocztowyColumn.setCellValueFactory(new PropertyValueFactory("klient_kod_pocztowy"));
+            editClientTable.getColumns().addAll(idColumn, loginColumn, hasloColumn, imieColumn, nazwiskoColumn, emailColumn, miastoColumn, ulicaColumn, nrdomuColumn, nrmieszkaniaColumn, kodpocztowyColumn);
+        }
         editClientTable.getItems().clear();
         editClientTable.getItems().addAll(klientServiceImp.findAll());
     }
 
-    public void filterClients(){
+    public void filterClients() {
         List<Klient> filtered = editClientTable.getItems();
         List<Klient> tempFilteredClients = new ArrayList<>();
-        for(Klient k: filtered){
+        for (Klient k : filtered) {
             tempFilteredClients.add(k);
         }
         filtered = tempFilteredClients.stream()
-                .filter(klient -> filterLogin.getText().isEmpty() || (klient.getKlient_login() == null)? true: (klient.getKlient_login().equals(filterLogin.getText())))
-                .filter(klient -> filterName.getText().isEmpty() || (klient.getKlient_imie() == null)? true: (klient.getKlient_imie().equals(filterName.getText())))
-                .filter(klient -> filterSecondName.getText().isEmpty() || (klient.getKlient_nazwisko() == null)? true: (klient.getKlient_nazwisko().equals(filterSecondName.getText())))
-                .filter(klient -> filterCity.getText().isEmpty() || (klient.getKlient_miasto() == null)? true: (klient.getKlient_miasto().equals(filterCity.getText())))
-                .filter(klient -> filterZipCode.getText().isEmpty() || (klient.getKlient_kod_pocztowy() == null)? true: (klient.getKlient_kod_pocztowy().equals(filterZipCode.getText())))
+                .filter(klient -> filterLogin.getText().isEmpty() || (klient.getKlient_login() == null) ? true : (klient.getKlient_login().equals(filterLogin.getText())))
+                .filter(klient -> filterName.getText().isEmpty() || (klient.getKlient_imie() == null) ? true : (klient.getKlient_imie().equals(filterName.getText())))
+                .filter(klient -> filterSecondName.getText().isEmpty() || (klient.getKlient_nazwisko() == null) ? true : (klient.getKlient_nazwisko().equals(filterSecondName.getText())))
+                .filter(klient -> filterCity.getText().isEmpty() || (klient.getKlient_miasto() == null) ? true : (klient.getKlient_miasto().equals(filterCity.getText())))
+                .filter(klient -> filterZipCode.getText().isEmpty() || (klient.getKlient_kod_pocztowy() == null) ? true : (klient.getKlient_kod_pocztowy().equals(filterZipCode.getText())))
                 .collect(Collectors.toList());
         editClientTable.getItems().clear();
         filterZipCode.clear();
@@ -157,12 +166,13 @@ public class AdminPanelController {
         filterName.clear();
         editClientTable.getItems().addAll(filtered);
     }
-    public void initializeClientOrder(){
-            klientChoise.getItems().clear();
+
+    public void initializeClientOrder() {
+        klientChoise.getItems().clear();
 
 
         List<Klient> klients = klientServiceImp.findAll();
-        for(Klient klient:klients){
+        for (Klient klient : klients) {
             klientChoise.getItems().add(klient);
         }
         klientChoise.setValue(klients.get(0));
@@ -181,7 +191,7 @@ public class AdminPanelController {
 
 
         });
-        if(firstTime){
+        if (firstTime) {
             clientOrderTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
                 if (newSelection != null) {
                     Zamowienie temporary = (Zamowienie) newSelection;
@@ -192,8 +202,9 @@ public class AdminPanelController {
         firstTime = false;
 
     }
-    public void showResults(){
-        if(clientOrderTable.getColumns().isEmpty()) {
+
+    public void showResults() {
+        if (clientOrderTable.getColumns().isEmpty()) {
             TableColumn<Zamowienie, String> idColumn = new TableColumn<>("Id");
             TableColumn<Zamowienie, String> workerColumn = new TableColumn<>("Pracownik");
             TableColumn<Zamowienie, String> clientColumn = new TableColumn<>("Klient");
@@ -204,7 +215,7 @@ public class AdminPanelController {
 
             idColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
             workerColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_imie())));
-            clientColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getKlient_id())));
+            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getKlient_id())));
             valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
             commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
             dateColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getZamowienie_data().toString())));
@@ -213,20 +224,21 @@ public class AdminPanelController {
         }
 
     }
-    public void orderDetailsFill(Integer orderID){
-        if(orderDetailsTable.getColumns().isEmpty()){
+
+    public void orderDetailsFill(Integer orderID) {
+        if (orderDetailsTable.getColumns().isEmpty()) {
             TableColumn<Szczegoly_zamowienia, String> nameColumn = new TableColumn<>("Nazwa albumu");
             TableColumn<Szczegoly_zamowienia, String> countColumn = new TableColumn<>("Ilość");
-            orderDetailsTable.getColumns().addAll(nameColumn,countColumn);
-            nameColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getCompositePrimaryKeySzcze_zam().getAlbum_id()).getAlbum_nazwa())));
-            countColumn.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getSzcze_zam_ilosc())));
+            orderDetailsTable.getColumns().addAll(nameColumn, countColumn);
+            nameColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getCompositePrimaryKeySzcze_zam().getAlbum_id()).getAlbum_nazwa())));
+            countColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getSzcze_zam_ilosc())));
         }
         orderDetailsTable.getItems().clear();
         orderDetailsTable.getItems().addAll(szczegoly_zamowieniaServiceImp.findByZamowienieId(orderID));
     }
 
-    public void clientRankingFill(){
-        if(bestClientsTable.getColumns().isEmpty()){
+    public void clientRankingFill() {
+        if (bestClientsTable.getColumns().isEmpty()) {
             TableColumn<Klient, String> idColumn = new TableColumn<>("Id");
             TableColumn<Klient, String> loginColumn = new TableColumn<>("Login");
             TableColumn<Klient, String> imieColumn = new TableColumn<>("Imie");
@@ -239,13 +251,14 @@ public class AdminPanelController {
             nazwiskoColumn.setCellValueFactory(new PropertyValueFactory("klient_nazwisko"));
             emailColumn.setCellValueFactory(new PropertyValueFactory("klient_email"));
             orderCountColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(zamowienieServiceImp.getOrderCountById(c.getValue().getKlient_id()))));
-            bestClientsTable.getColumns().addAll(idColumn, loginColumn,imieColumn, nazwiskoColumn, emailColumn, orderCountColumn);
+            bestClientsTable.getColumns().addAll(idColumn, loginColumn, imieColumn, nazwiskoColumn, emailColumn, orderCountColumn);
         }
-            bestClientsTable.getItems().clear();
-            bestClientsTable.getItems().addAll(klientServiceImp.getOrderedClients());// wszyscy uzytkownicy po najwiekszej ilosc izamowien
+        bestClientsTable.getItems().clear();
+        bestClientsTable.getItems().addAll(klientServiceImp.getOrderedClients());// wszyscy uzytkownicy po najwiekszej ilosc izamowien
     }
-    public void showEditAlbumsPane(){
-        if(albumEditTable.getColumns().isEmpty()){
+
+    public void showEditAlbumsPane() {
+        if (albumEditTable.getColumns().isEmpty()) {
             TableColumn<Album, String> idAlbumColumn = new TableColumn<>("Id");
             TableColumn<Album, String> gatunekColumn = new TableColumn<>("Gatunek");
             TableColumn<Album, String> zespolColumn = new TableColumn<>("Zespół");
@@ -263,7 +276,7 @@ public class AdminPanelController {
             iloscColumn.setCellValueFactory(new PropertyValueFactory("album_ilosc"));
             opisColumn.setCellValueFactory(new PropertyValueFactory("album_opis"));
             sciezkaDoZdjeciaColumn.setCellValueFactory(new PropertyValueFactory("album_zdjecie_sciezka"));
-            albumEditTable.getColumns().addAll(idAlbumColumn,gatunekColumn,zespolColumn,nazwaColumn,cenaColumn,opisColumn,sciezkaDoZdjeciaColumn,iloscColumn);
+            albumEditTable.getColumns().addAll(idAlbumColumn, gatunekColumn, zespolColumn, nazwaColumn, cenaColumn, opisColumn, sciezkaDoZdjeciaColumn, iloscColumn);
 
             zespolTableFilter.getItems().addAll(zespolServiceImp.findAll());
             zespolTableFilter.getItems().add(null);
@@ -277,42 +290,44 @@ public class AdminPanelController {
         //albumEditTable.getItems().addAll(albumServiceImp.findAll().stream().collect(Collectors.toList()));
         albumServiceImp.findAll().forEach(c -> albumEditTable.getItems().add(c));
 
-        }
-        public void filterAlbums(){
+    }
+
+    public void filterAlbums() {
         List<Album> filteredAlbums = albumServiceImp.findAll();
         Zespol temporaryZespol = (Zespol) zespolTableFilter.getValue();
         Gatunek_muzyki temporaryGatunek = (Gatunek_muzyki) gatunekTableFilter.getValue();
-        filteredAlbums = filteredAlbums.stream().filter(c -> ((temporaryZespol==null)?c.getZespol().getZespol_id():temporaryZespol.getZespol_id())==c.getZespol().getZespol_id())
-                .filter(c -> ((temporaryGatunek==null)?c.getGatunek_muzyki().getGatunek_id():temporaryGatunek.getGatunek_id())==c.getGatunek_muzyki().getGatunek_id())
+        filteredAlbums = filteredAlbums.stream().filter(c -> ((temporaryZespol == null) ? c.getZespol().getZespol_id() : temporaryZespol.getZespol_id()) == c.getZespol().getZespol_id())
+                .filter(c -> ((temporaryGatunek == null) ? c.getGatunek_muzyki().getGatunek_id() : temporaryGatunek.getGatunek_id()) == c.getGatunek_muzyki().getGatunek_id())
                 .collect(Collectors.toList());
         albumEditTable.getItems().clear();
         albumEditTable.getItems().addAll(filteredAlbums);
-        }
+    }
 
-        public void addAlbum(){
-           if(addAlbumZespol.getValue()!=null && addAlbumGatunek.getValue() != null && addAlbumNazwa.getText() != null && addAlbumIlosc.getText() != null && addAlbumCena.getText() != null && addAlbumSciezka.getText() != null){
-               Album albumToAdd = new Album();
-               albumToAdd.setGatunek_muzyki((Gatunek_muzyki) addAlbumGatunek.getValue());
-               albumToAdd.setZespol((Zespol) addAlbumZespol.getValue());
-               albumToAdd.setAlbum_nazwa(addAlbumNazwa.getText());
-               albumToAdd.setAlbum_ilosc(Integer.parseInt(addAlbumIlosc.getText()));
-               albumToAdd.setAlbum_cena(Float.parseFloat(addAlbumCena.getText()));
-               albumToAdd.setAlbum_zdjecie_sciezka(addAlbumSciezka.getText());
-               albumToAdd.setAlbum_opis(opisTextArea.getText());
-               albumServiceImp.save(albumToAdd);
-               addAlbumSciezka.clear();
-               addAlbumNazwa.clear();
-               addAlbumIlosc.clear();
-               addAlbumCena.clear();
-               opisTextArea.clear();
-               gatunekTableFilter.setValue(null);
-               zespolTableFilter.setValue(null);
-               albumEditTable.getItems().add(albumToAdd);
+    public void addAlbum() {
+        if (addAlbumZespol.getValue() != null && addAlbumGatunek.getValue() != null && addAlbumNazwa.getText() != null && addAlbumIlosc.getText() != null && addAlbumCena.getText() != null && addAlbumSciezka.getText() != null) {
+            Album albumToAdd = new Album();
+            albumToAdd.setGatunek_muzyki((Gatunek_muzyki) addAlbumGatunek.getValue());
+            albumToAdd.setZespol((Zespol) addAlbumZespol.getValue());
+            albumToAdd.setAlbum_nazwa(addAlbumNazwa.getText());
+            albumToAdd.setAlbum_ilosc(Integer.parseInt(addAlbumIlosc.getText()));
+            albumToAdd.setAlbum_cena(Float.parseFloat(addAlbumCena.getText()));
+            albumToAdd.setAlbum_zdjecie_sciezka(addAlbumSciezka.getText());
+            albumToAdd.setAlbum_opis(opisTextArea.getText());
+            albumServiceImp.save(albumToAdd);
+            addAlbumSciezka.clear();
+            addAlbumNazwa.clear();
+            addAlbumIlosc.clear();
+            addAlbumCena.clear();
+            opisTextArea.clear();
+            gatunekTableFilter.setValue(null);
+            zespolTableFilter.setValue(null);
+            albumEditTable.getItems().add(albumToAdd);
 
-           }
         }
-    public void listAllAlbums(){
-        if(allAlbumsTable.getColumns().isEmpty()){
+    }
+
+    public void listAllAlbums() {
+        if (allAlbumsTable.getColumns().isEmpty()) {
             // id Gatunek Zespól NAzwa labumu ilsoc cena
             TableColumn<Album, String> idAlbumColumn = new TableColumn<>("Id");
             TableColumn<Album, String> gatunekColumn = new TableColumn<>("Gatunek");
@@ -327,13 +342,14 @@ public class AdminPanelController {
             nazwaColumn.setCellValueFactory(new PropertyValueFactory("album_nazwa"));
             cenaColumn.setCellValueFactory(new PropertyValueFactory("album_cena"));
             iloscColumn.setCellValueFactory(new PropertyValueFactory("album_ilosc"));
-            allAlbumsTable.getColumns().addAll(idAlbumColumn,gatunekColumn,zespolColumn,nazwaColumn,cenaColumn,iloscColumn);
+            allAlbumsTable.getColumns().addAll(idAlbumColumn, gatunekColumn, zespolColumn, nazwaColumn, cenaColumn, iloscColumn);
         }
         allAlbumsTable.getItems().clear();
         allAlbumsTable.getItems().addAll(albumServiceImp.findAll());
     }
-    public void loadBands(){
-        if(bandsTable.getColumns().isEmpty()){
+
+    public void loadBands() {
+        if (bandsTable.getColumns().isEmpty()) {
             TableColumn<Zespol, String> bandIdColumn = new TableColumn<>("Id");
             TableColumn<Zespol, String> bandNameColumn = new TableColumn<>("Nazwa zespołu");
             bandIdColumn.setCellValueFactory(new PropertyValueFactory("zespol_id"));
@@ -345,8 +361,9 @@ public class AdminPanelController {
 
 
     }
-    public void addBand(){
-        if(addZespolField.getText() != null){
+
+    public void addBand() {
+        if (addZespolField.getText() != null) {
             Zespol zespolToAdd = new Zespol();
             zespolToAdd.setZespol_nazwa(addZespolField.getText());
             zespolServiceImp.save(zespolToAdd);
@@ -355,8 +372,9 @@ public class AdminPanelController {
         }
 
     }
-    public void loadGenre(){
-        if(genreTable.getColumns().isEmpty()){
+
+    public void loadGenre() {
+        if (genreTable.getColumns().isEmpty()) {
             TableColumn<Zespol, String> genreIdColumn = new TableColumn<>("Id");
             TableColumn<Zespol, String> genreNameColumn = new TableColumn<>("Nazwa zespołu");
             genreIdColumn.setCellValueFactory(new PropertyValueFactory("gatunek_id"));
@@ -367,8 +385,9 @@ public class AdminPanelController {
         genreTable.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
 
     }
-    public void addGenre(){
-        if(addGenreField.getText() != null){
+
+    public void addGenre() {
+        if (addGenreField.getText() != null) {
             Gatunek_muzyki gatunek_muzyki = new Gatunek_muzyki();
             gatunek_muzyki.setGatunek_nazwa(addGenreField.getText());
             gatunek_muzykiServiceImp.save(gatunek_muzyki);
@@ -377,12 +396,13 @@ public class AdminPanelController {
         }
 
     }
-    public void showAllEmployees(){
-        if(addEmployeePerrmisionsChoiseBox.getItems().isEmpty()){
-            addEmployeePerrmisionsChoiseBox.getItems().addAll(Integer.valueOf(0),Integer.valueOf(1),Integer.valueOf(2));
+
+    public void showAllEmployees() {
+        if (addEmployeePerrmisionsChoiseBox.getItems().isEmpty()) {
+            addEmployeePerrmisionsChoiseBox.getItems().addAll(Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2));
         }
 
-        if(employeesTable.getColumns().isEmpty()){
+        if (employeesTable.getColumns().isEmpty()) {
             TableColumn<Pracownik, String> employeeIdColumn = new TableColumn<>("Id");
             TableColumn<Pracownik, String> employeeNameColumn = new TableColumn<>("Imie");
             TableColumn<Pracownik, String> employeeSecondNameColumn = new TableColumn<>("Nazwa");
@@ -400,8 +420,9 @@ public class AdminPanelController {
         employeesTable.getItems().addAll(pracownikServiceImp.findAll());
 
     }
-    public void addEmployee(){
-        if(addEmployeeNameField != null && addEmployeeSecondNameField != null && addEmployeeVerificationCodeField != null){
+
+    public void addEmployee() {
+        if (addEmployeeNameField != null && addEmployeeSecondNameField != null && addEmployeeVerificationCodeField != null) {
             Pracownik pracownik = new Pracownik();
             pracownik.setPracownik_imie(addEmployeeNameField.getText());
             pracownik.setPracownik_nazwisko(addEmployeeSecondNameField.getText());
@@ -415,17 +436,18 @@ public class AdminPanelController {
         }
 
     }
-    public void addSong(){
-        if(!addSongNameTextField.getText().isEmpty() && !addSongDuraction.getText().isEmpty()){
+
+    public void addSong() {
+        if (!addSongNameTextField.getText().isEmpty() && !addSongDuraction.getText().isEmpty()) {
             Utwor utwor = new Utwor();
             utwor.setUtwor_nazwa(addSongNameTextField.getText());
             String timeToParse = addSongDuraction.getText();
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
             Date date = null;
             Time time = null;
-            try{
+            try {
                 date = sdf.parse(timeToParse);
-            }catch (ParseException e){
+            } catch (ParseException e) {
                 date = null;
             }
             time = new Time(date.getTime());
@@ -436,11 +458,12 @@ public class AdminPanelController {
             utworServiceImp.save(utwor);
         }
     }
-    public void showSongs(){
-        if(addSongAlbumChoiseBox.getItems().isEmpty()){
+
+    public void showSongs() {
+        if (addSongAlbumChoiseBox.getItems().isEmpty()) {
             addSongAlbumChoiseBox.getItems().addAll(albumServiceImp.findAll());
         }
-        if(songTable.getColumns().isEmpty()){
+        if (songTable.getColumns().isEmpty()) {
             TableColumn<Utwor, String> songIdColumn = new TableColumn<>("ID");
             TableColumn<Utwor, String> songAlbumNameColumn = new TableColumn<>("Album");
             TableColumn<Utwor, String> songNameColumn = new TableColumn<>("Nazwa utworu");
@@ -449,14 +472,18 @@ public class AdminPanelController {
             songIdColumn.setCellValueFactory(new PropertyValueFactory("utwor_id"));
             songNameColumn.setCellValueFactory(new PropertyValueFactory("utwor_nazwa"));
             songDuration.setCellValueFactory(new PropertyValueFactory("utwor_czas_trwania"));
-            songAlbumNameColumn.setCellValueFactory(c->  new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getAlbum_id()).getAlbum_nazwa())));
+            songAlbumNameColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getAlbum_id()).getAlbum_nazwa())));
             songTable.getColumns().addAll(songIdColumn, songAlbumNameColumn, songNameColumn, songDuration);
         }
         songTable.getItems().clear();
         songTable.getItems().addAll(utworServiceImp.findAll());
     }
-    public void showComments(){
-        if(commentsTable.getColumns().isEmpty()){
+
+    public void showComments() {
+        if (commentAlbumChoiseBox.getItems().isEmpty()) {
+            commentAlbumChoiseBox.getItems().addAll(albumServiceImp.findAll());
+        }
+        if (commentsTable.getColumns().isEmpty()) {
             TableColumn<Komentarz, String> commentId = new TableColumn<>("ID");
             TableColumn<Komentarz, String> commentAlbumName = new TableColumn<>("Album");
             TableColumn<Komentarz, String> commentLogin = new TableColumn<>("Login");
@@ -474,8 +501,130 @@ public class AdminPanelController {
         }
         commentsTable.getItems().clear();
         commentsTable.getItems().addAll(komentarzServiceImp.findAll());
-
     }
 
+    public void filterComment() {
+        if (commentAlbumChoiseBox.getValue() != null) {
+            Album filterByAlbum = (Album) commentAlbumChoiseBox.getValue();
+            commentsTable.getItems().clear();
+            commentsTable.getItems().addAll(komentarzServiceImp.findByAlbumId(filterByAlbum.getAlbum_id()));
+        }
     }
+
+    public void deleteComment() {
+        Komentarz commentToDelate = (Komentarz) commentsTable.getSelectionModel().getSelectedItem();
+        komentarzServiceImp.deleteComment(commentToDelate.getKomentarz_id());
+        commentsTable.getItems().remove(commentToDelate);
+    }
+
+    public void editComment() {
+    }
+
+
+    public void showMissingAlbums() {
+        if (missingAlbums.getColumns().isEmpty()) {
+            // id Gatunek Zespól NAzwa labumu ilsoc cena
+            TableColumn<Album, String> idAlbumColumn = new TableColumn<>("Id");
+            TableColumn<Album, String> nazwaColumn = new TableColumn<>("Nazwa albumu");
+            TableColumn<Album, String> iloscColumn = new TableColumn<>("Ilość");
+            idAlbumColumn.setCellValueFactory(new PropertyValueFactory("album_id"));
+            nazwaColumn.setCellValueFactory(new PropertyValueFactory("album_nazwa"));
+            iloscColumn.setCellValueFactory(new PropertyValueFactory("album_ilosc"));
+            missingAlbums.getColumns().addAll(idAlbumColumn, nazwaColumn, iloscColumn);
+        }
+        missingAlbums.getItems().clear();
+        missingAlbums.getItems().addAll(albumServiceImp.missingAlbums());
+    }
+    public void showOrdersToPrepare(){
+        if(ordersToPrepareTable.getColumns().isEmpty()){
+            orderStatusChoiseBox.getItems().addAll("Zrealizowane","Odrzucone");
+            orderStatusChoiseBox.setValue("Zrealizowane");
+            TableColumn<Zamowienie, String> orderIdColumn = new TableColumn<>("ID");
+            TableColumn<Zamowienie, String> orderEmployeeColumn = new TableColumn<>("Pracownik");
+            TableColumn<Zamowienie, String> clientColumn = new TableColumn<>("Klient");
+            TableColumn<Zamowienie, String> valueColumn = new TableColumn<>("Wartość");
+            TableColumn<Zamowienie, String> commentColumn = new TableColumn<>("Komentarz");
+            TableColumn<Zamowienie, String> dateColumn = new TableColumn<>("Data");
+            TableColumn<Zamowienie, String> statusColumn = new TableColumn<>("Status");
+
+            orderIdColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
+            orderEmployeeColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_id())));
+            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.getKlientNameById(c.getValue().getKlient_id()))));
+            valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
+            commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
+            dateColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_data"));
+            statusColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(StatusZamowienia.getStatusById(c.getValue().getZamowienie_status()))));
+            ordersToPrepareTable.getColumns().addAll(orderIdColumn, orderEmployeeColumn, clientColumn, valueColumn, commentColumn, dateColumn, statusColumn);
+        }
+        ordersToPrepareTable.getItems().clear();
+        ordersToPrepareTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(0));
+        if (addedListener) {
+            ordersToPrepareTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    Zamowienie temporary = (Zamowienie) newSelection;
+                    orderToPrepareDetailsFill(temporary.getZamowienie_id());
+                }
+            });
+        }
+        addedListener = false;
+    }
+    public void orderToPrepareDetailsFill(Integer orderID) {
+        if (ordersToPrepareDetails.getColumns().isEmpty()) {
+            TableColumn<Szczegoly_zamowienia, String> nameColumn = new TableColumn<>("Nazwa albumu");
+            TableColumn<Szczegoly_zamowienia, String> countColumn = new TableColumn<>("Ilość");
+            ordersToPrepareDetails.getColumns().addAll(nameColumn, countColumn);
+            nameColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getCompositePrimaryKeySzcze_zam().getAlbum_id()).getAlbum_nazwa())));
+            countColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getSzcze_zam_ilosc())));
+        }
+        ordersToPrepareDetails.getItems().clear();
+        ordersToPrepareDetails.getItems().addAll(szczegoly_zamowieniaServiceImp.findByZamowienieId(orderID));
+    }
+    public void changeOrderStatus(){
+        String status  = (String) orderStatusChoiseBox.getValue();
+        Zamowienie orderToChangeStatus = (Zamowienie) ordersToPrepareTable.getSelectionModel().getSelectedItem();
+        if (status.equals("Zrealizowane")) {
+            orderToChangeStatus.setZamowienie_status(1);
+        }else{
+            orderToChangeStatus.setZamowienie_status(2);
+        }
+            zamowienieServiceImp.save(orderToChangeStatus);
+        ordersToPrepareTable.getItems().clear();
+        ordersToPrepareTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(0));
+    }
+    public void showOrdersDone(){
+        if(ordersDoneTable.getColumns().isEmpty()){
+            employeeChoiseBox.getItems().addAll(pracownikServiceImp.findAll());
+            clientChoiseBox.getItems().addAll(klientServiceImp.findAll());
+            TableColumn<Zamowienie, String> orderIdColumn = new TableColumn<>("ID");
+            TableColumn<Zamowienie, String> orderEmployeeColumn = new TableColumn<>("Pracownik");
+            TableColumn<Zamowienie, String> clientColumn = new TableColumn<>("Klient");
+            TableColumn<Zamowienie, String> valueColumn = new TableColumn<>("Wartość");
+            TableColumn<Zamowienie, String> commentColumn = new TableColumn<>("Komentarz");
+            TableColumn<Zamowienie, String> dateColumn = new TableColumn<>("Data");
+            TableColumn<Zamowienie, String> statusColumn = new TableColumn<>("Status");
+
+            orderIdColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
+            orderEmployeeColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_id())));
+            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.getKlientNameById(c.getValue().getKlient_id()))));
+            valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
+            commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
+            dateColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_data"));
+            statusColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(StatusZamowienia.getStatusById(c.getValue().getZamowienie_status()))));
+            ordersDoneTable.getColumns().addAll(orderIdColumn, orderEmployeeColumn, clientColumn, valueColumn, commentColumn, dateColumn, statusColumn);
+        }
+        ordersDoneTable.getItems().clear();
+        ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(1));
+
+    }
+    public void filterOrdersDone(){
+        LocalDate localDate = dateFrom.getValue();
+        LocalDate tolocalDate = dateTo.getValue();
+        ordersDoneTable.getItems().clear();
+        Pracownik pracownik = (Pracownik) employeeChoiseBox.getValue();
+        Klient klient = (Klient) clientChoiseBox.getValue();
+        ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(0));
+        zamowienieServiceImp.getFilteredOrdersDone(String.valueOf(pracownik.getPracownik_id()),String.valueOf(klient.getKlient_id()), minValue.getText(), maxValue.getText(), localDate.toString(), tolocalDate.toString());
+    }
+}
+
 

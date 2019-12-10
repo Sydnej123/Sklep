@@ -266,81 +266,59 @@
                         </ScrollPane>
                      </children>
                   </AnchorPane>
-                  <Button layoutX="175.0" layoutY="527.0" mnemonicParsing="false" text="Filtruj" />
-                  <ChoiceBox layoutX="25.0" layoutY="527.0" prefWidth="150.0" />
-                  <Button layoutX="395.0" layoutY="527.0" mnemonicParsing="false" text="Usuń" />
-                  <Label layoutX="25.0" layoutY="510.0" text="Filtruj:" />
+                  <Button layoutX="224.0" layoutY="527.0" mnemonicParsing="false" onAction="#filterComment" text="Filtruj" />
+                  <ChoiceBox fx:id="commentAlbumChoiseBox" layoutX="74.0" layoutY="527.0" prefWidth="150.0" />
+                  <Button layoutX="396.0" layoutY="527.0" mnemonicParsing="false" onAction="#deleteComment" text="Usuń" />
+                  <Label layoutX="28.0" layoutY="510.0" text="Filtruj:" />
                   <Label layoutX="392.0" layoutY="510.0" text="Operacje:" />
-                  <Button layoutX="462.0" layoutY="527.0" mnemonicParsing="false" text="Edytuj" />
+                  <Button layoutX="442.0" layoutY="527.0" mnemonicParsing="false" onAction="#editComment" text="Edytuj" />
+                  <Label layoutX="28.0" layoutY="531.0" text="Album:" />
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Brakujące towary">
+      <Tab onSelectionChanged="#showMissingAlbums" text="Brakujące towary">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="691.0" prefWidth="1289.0">
                <children>
                   <ScrollPane layoutX="7.0">
                      <content>
-                        <TableView prefHeight="691.0" prefWidth="352.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="ID" />
-                            <TableColumn prefWidth="155.0" text="Nazwa albumu" />
-                              <TableColumn prefWidth="124.0" text="Ilość" />
-                          </columns>
-                        </TableView>
+                        <TableView fx:id="missingAlbums" prefHeight="691.0" prefWidth="488.0" />
                      </content>
                   </ScrollPane>
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Zamówienia do zrealizowania">
+      <Tab onSelectionChanged="#showOrdersToPrepare" text="Zamówienia do zrealizowania">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <ScrollPane layoutX="6.0" />
-                  <TableView prefHeight="500.0" prefWidth="1281.0">
-                     <columns>
-                        <TableColumn prefWidth="75.0" text="Id" />
-                        <TableColumn prefWidth="121.0" text="Pracownik" />
-                        <TableColumn prefWidth="123.0" text="Klient" />
-                        <TableColumn prefWidth="149.0" text="Wartość" />
-                        <TableColumn prefWidth="169.0" text="Komentarz" />
-                        <TableColumn prefWidth="155.0" text="Data" />
-                        <TableColumn prefWidth="153.0" text="Szczegóły" />
-                        <TableColumn prefWidth="127.0" text="Status" />
-                        <TableColumn prefWidth="208.0" text="Zmień status" />
-                     </columns>
-                  </TableView>
+                  <TableView fx:id="ordersToPrepareTable" prefHeight="400.0" prefWidth="1281.0" />
+                  <TableView fx:id="ordersToPrepareDetails" layoutY="456.0" prefHeight="192.0" prefWidth="446.0" />
+                  <Label layoutX="14.0" layoutY="439.0" text="Szczegóły zamówienia" />
+                  <ChoiceBox fx:id="orderStatusChoiseBox" layoutX="591.0" layoutY="456.0" prefWidth="150.0" />
+                  <Button layoutX="741.0" layoutY="456.0" mnemonicParsing="false" onAction="#changeOrderStatus" text="Zmień" />
+                  <Label layoutX="591.0" layoutY="439.0" text="Zmień status zamówienia:" />
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Zamówienia zrealizowane">
+      <Tab onSelectionChanged="#showOrdersDone" text="Zamówienia zrealizowane">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <ScrollPane>
                      <content>
-                        <TableView prefHeight="509.0" prefWidth="1277.0">
-                           <columns>
-                              <TableColumn prefWidth="75.0" text="Id" />
-                              <TableColumn prefWidth="135.0" text="Pracownik" />
-                              <TableColumn prefWidth="208.0" text="Klient" />
-                              <TableColumn prefWidth="247.0" text="Wartość" />
-                              <TableColumn prefWidth="208.0" text="Komentarz" />
-                              <TableColumn prefWidth="189.0" text="Data" />
-                              <TableColumn prefWidth="214.0" text="Operacja" />
-                           </columns>
-                        </TableView>
+                        <TableView fx:id="ordersDoneTable" prefHeight="509.0" prefWidth="1277.0" />
                      </content>
                   </ScrollPane>
-                  <DatePicker layoutX="693.0" layoutY="580.0" />
-                  <DatePicker layoutX="907.0" layoutY="580.0" />
-                  <Button layoutX="1092.0" layoutY="580.0" mnemonicParsing="false" text="Filtruj" />
+                  <DatePicker fx:id="dateFrom" layoutX="693.0" layoutY="580.0" />
+                  <DatePicker fx:id="dateTo" layoutX="907.0" layoutY="580.0" />
+                  <Button layoutX="1092.0" layoutY="580.0" mnemonicParsing="false" onAction="#filterOrdersDone" text="Filtruj" />
                   <Label layoutX="14.0" layoutY="584.0" text="Filtruj:" />
-                  <ChoiceBox layoutX="81.0" layoutY="580.0" prefWidth="150.0" />
-                  <ChoiceBox layoutX="248.0" layoutY="580.0" prefWidth="150.0" />
-                  <TextField layoutX="450.0" layoutY="580.0" prefHeight="25.0" prefWidth="60.0" />
-                  <TextField layoutX="556.0" layoutY="580.0" prefHeight="25.0" prefWidth="60.0" />
+                  <ChoiceBox fx:id="employeeChoiseBox" layoutX="81.0" layoutY="580.0" prefWidth="150.0" />
+                  <ChoiceBox fx:id="clientChoiseBox" layoutX="248.0" layoutY="580.0" prefWidth="150.0" />
+                  <TextField fx:id="minValue" layoutX="450.0" layoutY="580.0" prefHeight="25.0" prefWidth="60.0" />
+                  <TextField fx:id="maxValue" layoutX="556.0" layoutY="580.0" prefHeight="25.0" prefWidth="60.0" />
                   <Label layoutX="81.0" layoutY="554.0" text="Pracownik:" />
                   <Label layoutX="248.0" layoutY="554.0" text="Klient:" />
                   <Label layoutX="425.0" layoutY="554.0" text="Wartość zamówienia:" />

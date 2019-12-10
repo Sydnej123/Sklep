@@ -49,5 +49,10 @@ public class AlbumServiceImp implements AlbumService{
         albumRepository.save(album);
     }
 
+    @Override
+    public List<Album> missingAlbums() {
+        return albumRepository.missingAlbums();
+    }
+
 
 }

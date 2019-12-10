@@ -11,4 +11,5 @@ public interface AlbumService {
     Integer countBandAlbums(Integer bandID);
     Album findById(Integer id);
     void save(Album album);
+    List<Album> missingAlbums();
 }

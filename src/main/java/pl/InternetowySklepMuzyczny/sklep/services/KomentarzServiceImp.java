@@ -20,4 +20,14 @@ public class KomentarzServiceImp implements  KomentarzService{
         }
         return temp;
     }
+
+    @Override
+    public List<Komentarz> findByAlbumId(Integer id) {
+        return komentarzRepository.findByAlbumId(id);
+    }
+
+    @Override
+    public void deleteComment(Integer id) {
+        komentarzRepository.deleteById(id);
+    }
 }

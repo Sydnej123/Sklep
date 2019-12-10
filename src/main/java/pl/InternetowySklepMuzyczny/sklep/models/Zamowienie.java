@@ -22,7 +22,15 @@ public class Zamowienie {
     Date zamowienie_data;
     @OneToMany(mappedBy = "zamowienie")
     Set<Szczegoly_zamowienia> szczegoly_zamowienia;
+    public Integer getZamowienie_status() {
+        return zamowienie_status;
+    }
 
+    public void setZamowienie_status(Integer zamowienie_status) {
+        this.zamowienie_status = zamowienie_status;
+    }
+
+    Integer zamowienie_status;
     public int getZamowienie_id() {
         return zamowienie_id;
     }
