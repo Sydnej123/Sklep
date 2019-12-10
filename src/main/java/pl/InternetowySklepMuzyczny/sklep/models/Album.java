@@ -3,9 +3,17 @@ package pl.InternetowySklepMuzyczny.sklep.models;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 @Entity
 public class Album {
+    @Override
+    public String toString() {
+        return "Album{" +
+                "album_id=" + album_id +
+                ", zespol=" + zespol +
+                ", album_nazwa='" + album_nazwa + '\'' +
+                '}';
+    }
+
     public List<Komentarz> getKomentarz() {
         return komentarz;
     }

@@ -12,4 +12,5 @@ public interface KlientService {
     ArrayList<String> findLoginByID(Integer id);
     ArrayList<Klient> findAll();
     ArrayList<Klient> getOrderedClients();
+    String getKlientNameById(Integer id);
 }

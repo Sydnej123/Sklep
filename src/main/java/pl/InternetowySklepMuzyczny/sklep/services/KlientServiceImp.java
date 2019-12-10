@@ -52,4 +52,9 @@ public class KlientServiceImp implements KlientService{
         return klientRepository.getOrderedClients();
     }
 
+    @Override
+    public String getKlientNameById(Integer id) {
+        return klientRepository.findById(id).get().getKlient_login();
+    }
+
 }

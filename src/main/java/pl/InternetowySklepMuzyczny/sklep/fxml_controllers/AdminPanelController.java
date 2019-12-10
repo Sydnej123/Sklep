@@ -13,7 +13,11 @@ import org.springframework.stereotype.Controller;
 import pl.InternetowySklepMuzyczny.sklep.models.*;
 import pl.InternetowySklepMuzyczny.sklep.services.*;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -25,7 +29,7 @@ public class AdminPanelController {
     TitledPane editClientsTab, clientOrderPane, albumsEditPane;
 
     @FXML
-    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable, allAlbumsTable, bandsTable, genreTable, employeesTable;
+    TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable, allAlbumsTable, bandsTable, genreTable, employeesTable, songTable, commentsTable;
 
     @FXML
     TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField, addGenreField,
@@ -61,6 +65,10 @@ public class AdminPanelController {
     AlbumServiceImp albumServiceImp;
     @Autowired
     Gatunek_muzykiServiceImp gatunek_muzykiServiceImp;
+    @Autowired
+    UtworServiceImp utworServiceImp;
+    @Autowired
+    KomentarzServiceImp komentarzServiceImp;
     private boolean firstTime= true;
     public void insertNewClient(){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -408,10 +416,66 @@ public class AdminPanelController {
 
     }
     public void addSong(){
-
+        if(!addSongNameTextField.getText().isEmpty() && !addSongDuraction.getText().isEmpty()){
+            Utwor utwor = new Utwor();
+            utwor.setUtwor_nazwa(addSongNameTextField.getText());
+            String timeToParse = addSongDuraction.getText();
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+            Date date = null;
+            Time time = null;
+            try{
+                date = sdf.parse(timeToParse);
+            }catch (ParseException e){
+                date = null;
+            }
+            time = new Time(date.getTime());
+            utwor.setUtwor_czas_trwania(time);
+            Album albumId = (Album) addSongAlbumChoiseBox.getValue();
+            utwor.setAlbum_id(albumId.getAlbum_id());
+            songTable.getItems().add(utwor);
+            utworServiceImp.save(utwor);
+        }
     }
     public void showSongs(){
+        if(addSongAlbumChoiseBox.getItems().isEmpty()){
+            addSongAlbumChoiseBox.getItems().addAll(albumServiceImp.findAll());
+        }
+        if(songTable.getColumns().isEmpty()){
+            TableColumn<Utwor, String> songIdColumn = new TableColumn<>("ID");
+            TableColumn<Utwor, String> songAlbumNameColumn = new TableColumn<>("Album");
+            TableColumn<Utwor, String> songNameColumn = new TableColumn<>("Nazwa utworu");
+            TableColumn<Utwor, String> songDuration = new TableColumn<>("Czas trwania");
+
+            songIdColumn.setCellValueFactory(new PropertyValueFactory("utwor_id"));
+            songNameColumn.setCellValueFactory(new PropertyValueFactory("utwor_nazwa"));
+            songDuration.setCellValueFactory(new PropertyValueFactory("utwor_czas_trwania"));
+            songAlbumNameColumn.setCellValueFactory(c->  new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getAlbum_id()).getAlbum_nazwa())));
+            songTable.getColumns().addAll(songIdColumn, songAlbumNameColumn, songNameColumn, songDuration);
+        }
+        songTable.getItems().clear();
+        songTable.getItems().addAll(utworServiceImp.findAll());
+    }
+    public void showComments(){
+        if(commentsTable.getColumns().isEmpty()){
+            TableColumn<Komentarz, String> commentId = new TableColumn<>("ID");
+            TableColumn<Komentarz, String> commentAlbumName = new TableColumn<>("Album");
+            TableColumn<Komentarz, String> commentLogin = new TableColumn<>("Login");
+            TableColumn<Komentarz, String> commentContent = new TableColumn<>("Treść");
+            TableColumn<Komentarz, String> commentRate = new TableColumn<>("Ocena");
+            TableColumn<Komentarz, String> commentDate = new TableColumn<>("Data");
+
+            commentId.setCellValueFactory(new PropertyValueFactory("komentarz_id"));
+            commentAlbumName.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(albumServiceImp.findById(c.getValue().getAlbum().getAlbum_id()).getAlbum_nazwa())));
+            commentLogin.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.findLoginByID(c.getValue().getKlient().getKlient_id()))));
+            commentContent.setCellValueFactory(new PropertyValueFactory("komentarz_tresc"));
+            commentRate.setCellValueFactory(new PropertyValueFactory("komentarz_ocena"));
+            commentDate.setCellValueFactory(new PropertyValueFactory("komentarz_data"));
+            commentsTable.getColumns().addAll(commentId, commentAlbumName, commentLogin, commentContent, commentRate, commentDate);
+        }
+        commentsTable.getItems().clear();
+        commentsTable.getItems().addAll(komentarzServiceImp.findAll());
 
     }
+
     }
 
