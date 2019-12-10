@@ -3,10 +3,12 @@ package pl.InternetowySklepMuzyczny.sklep.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.InternetowySklepMuzyczny.sklep.models.Album;
+import pl.InternetowySklepMuzyczny.sklep.models.Pracownik;
 import pl.InternetowySklepMuzyczny.sklep.repositories.AlbumRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AlbumServiceImp implements AlbumService{
@@ -46,4 +48,6 @@ public class AlbumServiceImp implements AlbumService{
     public void save(Album album) {
         albumRepository.save(album);
     }
+
+
 }

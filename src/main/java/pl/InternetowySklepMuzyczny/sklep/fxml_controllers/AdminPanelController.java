@@ -32,14 +32,14 @@ public class AdminPanelController {
             addEmployeeNameField, addEmployeeSecondNameField, addEmployeeVerificationCodeField;
 
     @FXML
-    TextField filterLogin, filterName, filterSecondName, filterCity, filterZipCode, addAlbumNazwa, addAlbumIlosc, addAlbumCena, addAlbumSciezka, addZespolField;
+    TextField filterLogin, filterName, filterSecondName, filterCity, filterZipCode, addAlbumNazwa, addAlbumIlosc, addAlbumCena, addAlbumSciezka, addZespolField, addSongNameTextField, addSongDuraction;
     @FXML
     Label errorLabel;
     @FXML
     Button filterButton;
 
     @FXML
-    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox;
+    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox, addSongAlbumChoiseBox;
 
     @FXML
     TextArea opisTextArea;
@@ -405,6 +405,13 @@ public class AdminPanelController {
             addEmployeeSecondNameField.clear();
             addEmployeeNameField.clear();
         }
+
+    }
+    public void addSong(){
+
+    }
+    public void showSongs(){
+
     }
     }
 

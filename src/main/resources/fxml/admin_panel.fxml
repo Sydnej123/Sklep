@@ -229,15 +229,16 @@
                </children></AnchorPane>
         </content>
       </Tab>
-      <Tab text="Utwory">
+      <Tab onSelectionChanged="#showSongs" text="Utwory">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
+                  <ChoiceBox fx:id="addSongAlbumChoiseBox" layoutX="911.0" layoutY="86.0" prefWidth="150.0" />
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="690.0" prefWidth="783.0">
                      <children>
                         <ScrollPane>
                            <content>
-                              <TableView prefHeight="686.0" prefWidth="781.0">
+                              <TableView fx:id="songTable" prefHeight="686.0" prefWidth="781.0">
                                  <columns>
                                     <TableColumn prefWidth="75.0" text="ID" />
                                     <TableColumn prefWidth="175.0" text="Album" />
@@ -252,12 +253,11 @@
                         <Label layoutX="914.0" layoutY="70.0" text="Album:" />
                      </children>
                   </AnchorPane>
-                  <ChoiceBox layoutX="911.0" layoutY="86.0" prefWidth="150.0" />
-                  <TextField layoutX="1075.0" layoutY="139.0" />
+                  <TextField fx:id="addSongDuraction" layoutX="1075.0" layoutY="139.0" />
                   <Label layoutX="1075.0" layoutY="118.0" text="Czas trwania:" />
-                  <TextField layoutX="912.0" layoutY="139.0" />
+                  <TextField fx:id="addSongNameTextField" layoutX="912.0" layoutY="139.0" />
                   <Label layoutX="917.0" layoutY="118.0" text="Nazwa:" />
-                  <Button layoutX="1176.0" layoutY="183.0" mnemonicParsing="false" text="Dodaj" />
+                  <Button layoutX="1176.0" layoutY="183.0" mnemonicParsing="false" onAction="#addSong" text="Dodaj" />
                </children></AnchorPane>
         </content>
       </Tab>
