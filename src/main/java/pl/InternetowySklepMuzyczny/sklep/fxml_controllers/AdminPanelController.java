@@ -18,6 +18,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -215,7 +216,7 @@ public class AdminPanelController {
 
             idColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
             workerColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_imie())));
-            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getKlient_id())));
+            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getKlient().getKlient_id())));
             valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
             commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
             dateColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getZamowienie_data().toString())));
@@ -549,7 +550,7 @@ public class AdminPanelController {
 
             orderIdColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
             orderEmployeeColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_id())));
-            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.getKlientNameById(c.getValue().getKlient_id()))));
+            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.getKlientNameById(c.getValue().getKlient().getKlient_id()))));
             valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
             commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
             dateColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_data"));
@@ -594,7 +595,9 @@ public class AdminPanelController {
     public void showOrdersDone(){
         if(ordersDoneTable.getColumns().isEmpty()){
             employeeChoiseBox.getItems().addAll(pracownikServiceImp.findAll());
+            employeeChoiseBox.getItems().add(null);
             clientChoiseBox.getItems().addAll(klientServiceImp.findAll());
+            clientChoiseBox.getItems().add(null);
             TableColumn<Zamowienie, String> orderIdColumn = new TableColumn<>("ID");
             TableColumn<Zamowienie, String> orderEmployeeColumn = new TableColumn<>("Pracownik");
             TableColumn<Zamowienie, String> clientColumn = new TableColumn<>("Klient");
@@ -605,7 +608,7 @@ public class AdminPanelController {
 
             orderIdColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_id"));
             orderEmployeeColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(c.getValue().getPracownik().getPracownik_id())));
-            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.getKlientNameById(c.getValue().getKlient_id()))));
+            clientColumn.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(klientServiceImp.getKlientNameById(c.getValue().getKlient().getKlient_id()))));
             valueColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_wartosc"));
             commentColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_komentarz"));
             dateColumn.setCellValueFactory(new PropertyValueFactory("zamowienie_data"));
@@ -622,8 +625,34 @@ public class AdminPanelController {
         ordersDoneTable.getItems().clear();
         Pracownik pracownik = (Pracownik) employeeChoiseBox.getValue();
         Klient klient = (Klient) clientChoiseBox.getValue();
-        ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(0));
-        zamowienieServiceImp.getFilteredOrdersDone(String.valueOf(pracownik.getPracownik_id()),String.valueOf(klient.getKlient_id()), minValue.getText(), maxValue.getText(), localDate.toString(), tolocalDate.toString());
+        //ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(0));
+        List<Zamowienie> filteredZamowienie;
+        filteredZamowienie = zamowienieServiceImp.getOrderByStatus(1).stream()
+                .filter(c-> (klient != null)?(c.getKlient().getKlient_id() == klient.getKlient_id()):true)
+                .filter(c -> (pracownik != null)?(c.getPracownik().getPracownik_id() == pracownik.getPracownik_id()):true)
+                .filter( c-> (!minValue.getText().isEmpty())?(c.getZamowienie_wartosc() >= Double.parseDouble(minValue.getText())):true)
+                .filter( c-> (!maxValue.getText().isEmpty())?(c.getZamowienie_wartosc() <= Double.parseDouble(maxValue.getText())):true)
+                .filter(c -> (dateFrom.getValue() != null)?(c.getZamowienie_data().after(java.util.Date.from(dateFrom.getValue().atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()))):true)
+                .filter(c -> (dateTo.getValue() != null)?(c.getZamowienie_data().before(java.util.Date.from(dateTo.getValue().atStartOfDay()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()))):true)
+                .collect(Collectors.toList());
+        ordersDoneTable.getItems().clear();
+        ordersDoneTable.getItems().addAll(filteredZamowienie);
+    }
+    public void showRaport(){
+        TableColumn<String, String> ordersCount = new TableColumn<>("Ilość zamówień");
+        TableColumn<String, String> ordersValueCount = new TableColumn<>("Łączna wartość zamówień");
+        TableColumn<String, String> albumsSold = new TableColumn<>("Sprzedanych zamówień");
+        TableColumn<String, String> avarageNumberOfAlbums = new TableColumn<>("Średnia ilość albumów na zamówienie");
+        TableColumn<String, String> avarageOrderValue = new TableColumn<>("Średnia wartość zamówienia");
+        TableColumn<String, String> bestSellerAlbum = new TableColumn<>("Najlepiej sprzedający się album");
+        TableColumn<String, String> bestSellerBand = new TableColumn<>("Najczęściej wybierany zespół");
+        TableColumn<String, String> ordersCanceled = new TableColumn<>("Ilość odrzuconych zamówień");
+        TableColumn<String, String> bestEmployee = new TableColumn<>("Pracownik z największa ilością zrealizowanyc zamówień");
+
     }
 }
 

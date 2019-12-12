@@ -8,7 +8,7 @@ import java.util.Set;
 public class Klient implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int klient_id;
+    private Integer klient_id;
     @Column(length = 20)
     private String klient_imie;
     @Column(length = 20)
@@ -32,11 +32,21 @@ public class Klient implements Serializable {
     @OneToMany(mappedBy = "klient")
     private Set<Komentarz> komentarz;
 
-    public int getKlient_id() {
+    public Set<Zamowienie> getZamowienie() {
+        return zamowienie;
+    }
+
+    public void setZamowienie(Set<Zamowienie> zamowienie) {
+        this.zamowienie = zamowienie;
+    }
+
+    @OneToMany(mappedBy = "klient")
+    private Set<Zamowienie> zamowienie;
+    public Integer getKlient_id() {
         return klient_id;
     }
 
-    public void setKlient_id(int klient_id) {
+    public void setKlient_id(Integer klient_id) {
         this.klient_id = klient_id;
     }
 

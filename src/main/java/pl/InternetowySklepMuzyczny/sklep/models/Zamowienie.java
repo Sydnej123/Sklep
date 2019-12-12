@@ -11,14 +11,29 @@ import java.util.Set;
 public class Zamowienie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int zamowienie_id;
+    Integer zamowienie_id;
     @ManyToOne
     @JoinColumn(name = "pracownik_id", nullable = false)
     Pracownik pracownik;
-    int klient_id;
+    @ManyToOne
+    @JoinColumn(name ="klient_id", nullable = false)
+    Klient klient;
     Float zamowienie_wartosc;
     @Column(length = 1000)
     String zamowienie_komentarz;
+
+    public void setZamowienie_id(Integer zamowienie_id) {
+        this.zamowienie_id = zamowienie_id;
+    }
+
+    public Klient getKlient() {
+        return klient;
+    }
+
+    public void setKlient(Klient klient) {
+        this.klient = klient;
+    }
+
     Date zamowienie_data;
     @OneToMany(mappedBy = "zamowienie")
     Set<Szczegoly_zamowienia> szczegoly_zamowienia;
@@ -47,13 +62,6 @@ public class Zamowienie {
         this.pracownik = pracownik;
     }
 
-    public int getKlient_id() {
-        return klient_id;
-    }
-
-    public void setKlient_id(int klient_id) {
-        this.klient_id = klient_id;
-    }
 
     public Float getZamowienie_wartosc() {
         return zamowienie_wartosc;

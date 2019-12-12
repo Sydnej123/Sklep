@@ -9,7 +9,33 @@ import java.util.List;
 public class Pracownik {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int pracownik_id;
+    Integer pracownik_id;
+
+    public Integer getPracownik_id() {
+        return pracownik_id;
+    }
+
+    public void setPracownik_id(Integer pracownik_id) {
+        this.pracownik_id = pracownik_id;
+    }
+
+    @Override
+    public String toString() {
+        return "Pracownik{" +
+                "pracownik_id=" + pracownik_id +
+                ", pracownik_imie='" + pracownik_imie + '\'' +
+                ", pracownik_nazwisko='" + pracownik_nazwisko + '\'' +
+                '}';
+    }
+
+    public List<Zamowienie> getZamowienia() {
+        return zamowienia;
+    }
+
+    public void setZamowienia(List<Zamowienie> zamowienia) {
+        this.zamowienia = zamowienia;
+    }
+
     @OneToMany(mappedBy = "pracownik")
     List<Zamowienie> zamowienia = new ArrayList<>();
     @Column(length = 20)
@@ -27,14 +53,6 @@ public class Pracownik {
         this.pracownik_kod = pracownik_kod;
     }
 
-
-    public int getPracownik_id() {
-        return pracownik_id;
-    }
-
-    public void setPracownik_id(int pracownik_id) {
-        this.pracownik_id = pracownik_id;
-    }
 
     public String getPracownik_imie() {
         return pracownik_imie;
