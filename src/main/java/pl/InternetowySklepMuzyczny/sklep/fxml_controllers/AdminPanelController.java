@@ -646,6 +646,8 @@ public class AdminPanelController {
     public void showRaport(){
         LocalDate localDate = raportDateFrom.getValue();
         LocalDate tolocalDate =raportDateTo.getValue();
+        Date dateFrom = Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+        Date dateTo = Date.from(tolocalDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
         if(raportFirstTable.getColumns().isEmpty() && raportSecondTable.getColumns().isEmpty()){
             TableColumn<String, String> ordersCount = new TableColumn<>("Ilość zamówień");
             TableColumn<String, String> ordersValueCount = new TableColumn<>("Łączna wartość zamówień");
@@ -653,17 +655,25 @@ public class AdminPanelController {
             TableColumn<String, String> avarageNumberOfAlbums = new TableColumn<>("Średnia ilość albumów na zamówienie");
             TableColumn<String, String> avarageOrderValue = new TableColumn<>("Średnia wartość zamówienia");
             TableColumn<String, String> bestSellerAlbum = new TableColumn<>("Najlepiej sprzedający się album");
-            TableColumn<String, String> bestSellerBand = new TableColumn<>("Najczęściej wybierany zespół");
             TableColumn<String, String> ordersCanceled = new TableColumn<>("Ilość odrzuconych zamówień");
             TableColumn<String, String> bestEmployee = new TableColumn<>("Pracownik z największa ilością zrealizowanyc zamówień");
 
             ordersCount.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(zamowienieServiceImp.getOrdersCount(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), Date.from(tolocalDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())))));
-
+            ordersValueCount.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.format("%.2f", zamowienieServiceImp.sumValue(dateFrom, dateTo))));
+            albumsSold.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(szczegoly_zamowieniaServiceImp.getAlbumsCount(dateFrom, dateTo))));
+            avarageNumberOfAlbums.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.format("%.2f", zamowienieServiceImp.avarageAlbumsPerOrder(dateFrom, dateTo))));
+            avarageOrderValue.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.format("%.2f", zamowienieServiceImp.avarageOrderValue(dateFrom, dateTo))));
+            ordersCanceled.setCellValueFactory(c->new ReadOnlyStringWrapper(String.valueOf(zamowienieServiceImp.canceledOrders(dateFrom, dateTo))));
+            bestEmployee.setCellValueFactory(c-> new ReadOnlyStringWrapper(pracownikServiceImp.getBestSeller(dateFrom, dateTo)));
+            bestSellerAlbum.setCellValueFactory(c-> new ReadOnlyStringWrapper(szczegoly_zamowieniaServiceImp.getBestSellerAlbumName(dateFrom, dateTo)));
             raportFirstTable.getColumns().addAll(ordersCount, ordersValueCount, albumsSold, avarageNumberOfAlbums);
-            raportSecondTable.getColumns().addAll(avarageOrderValue, bestSellerAlbum, bestSellerBand, ordersCanceled, bestEmployee);
+            raportSecondTable.getColumns().addAll(avarageOrderValue, bestSellerAlbum, ordersCanceled, bestEmployee);
+
         }
         raportFirstTable.getItems().clear();
         raportFirstTable.getItems().add(null);
+        raportSecondTable.getItems().clear();
+        raportSecondTable.getItems().add(null);
 
 
 

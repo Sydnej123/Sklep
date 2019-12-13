@@ -11,6 +11,8 @@ import java.util.List;
 public class ZamowienieServiceImp implements ZamowienieService {
     @Autowired
     ZamowienieRepository zamowienieRepository;
+    @Autowired
+    Szczegoly_zamowieniaServiceImp szczegoly_zamowieniaServiceImp;
     @Override
     public List<Zamowienie> getOrderByClientId(Integer id) {
         return zamowienieRepository.getOrdersByClientId(id);
@@ -39,6 +41,26 @@ public class ZamowienieServiceImp implements ZamowienieService {
     @Override
     public Double getSumValueOrders(Date dateFrom, Date dateTo) {
         return zamowienieRepository.getSumValueOrders(dateFrom, dateTo);
+    }
+
+    @Override
+    public Double sumValue(Date dateFrom, Date dateTo) {
+        return zamowienieRepository.sumValue(dateFrom, dateTo);
+    }
+
+    @Override
+    public Double avarageAlbumsPerOrder(Date dateFrom, Date dateTo) {
+        return szczegoly_zamowieniaServiceImp.getAlbumsCount(dateFrom, dateTo)/(double)(getOrdersCount(dateFrom,dateTo)==0?1:getOrdersCount(dateFrom, dateTo));
+    }
+
+    @Override
+    public Double avarageOrderValue(Date dateFrom, Date dateTo) {
+        return sumValue(dateFrom,dateTo)/((getOrdersCount(dateFrom,dateTo)==0?1:getOrdersCount(dateFrom, dateTo)));
+    }
+
+    @Override
+    public Long canceledOrders(Date dateFrom, Date dateTo) {
+        return zamowienieRepository.canceledOrders(dateFrom, dateTo);
     }
 
 

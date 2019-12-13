@@ -13,6 +13,9 @@ public interface ZamowienieService {
     void save(Zamowienie zamowienie);
      Long getOrdersCount(Date dateFrom, Date dateTo);
     Double getSumValueOrders(Date dateFrom, Date dateTo);
-
+    Double sumValue(Date dateFrom, Date dateTo);
+    Double avarageAlbumsPerOrder(Date dateFrom, Date dateTo);
+    Double avarageOrderValue(Date dateFrom, Date dateTo);
+    Long canceledOrders(Date dateFrom, Date dateTo);
 
 }

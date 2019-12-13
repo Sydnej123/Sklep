@@ -3,6 +3,7 @@ package pl.InternetowySklepMuzyczny.sklep.models;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -28,16 +29,16 @@ public class Pracownik {
                 '}';
     }
 
-    public List<Zamowienie> getZamowienia() {
-        return zamowienia;
+    public Set<Zamowienie> getZamowienie() {
+        return zamowienie;
     }
 
-    public void setZamowienia(List<Zamowienie> zamowienia) {
-        this.zamowienia = zamowienia;
+    public void setZamowienia(Set<Zamowienie> zamowienie) {
+        this.zamowienie = zamowienie;
     }
 
     @OneToMany(mappedBy = "pracownik")
-    List<Zamowienie> zamowienia = new ArrayList<>();
+    Set<Zamowienie> zamowienie;
     @Column(length = 20)
     String pracownik_imie;
     @Column(length = 20)
