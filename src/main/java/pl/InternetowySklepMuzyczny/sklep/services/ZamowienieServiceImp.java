@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.InternetowySklepMuzyczny.sklep.models.Zamowienie;
 import pl.InternetowySklepMuzyczny.sklep.repositories.ZamowienieRepository;
 
+import java.util.Date;
 import java.util.List;
 @Service
 public class ZamowienieServiceImp implements ZamowienieService {
@@ -28,6 +29,16 @@ public class ZamowienieServiceImp implements ZamowienieService {
     @Override
     public void save(Zamowienie zamowienie) {
         zamowienieRepository.save(zamowienie);
+    }
+
+    @Override
+    public Long getOrdersCount(Date dateFrom, Date dateTo) {
+        return zamowienieRepository.getOrdersCount(dateFrom,dateTo);
+    }
+
+    @Override
+    public Double getSumValueOrders(Date dateFrom, Date dateTo) {
+        return zamowienieRepository.getSumValueOrders(dateFrom, dateTo);
     }
 
 

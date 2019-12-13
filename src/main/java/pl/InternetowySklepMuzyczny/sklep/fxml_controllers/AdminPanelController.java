@@ -14,6 +14,7 @@ import pl.InternetowySklepMuzyczny.sklep.StatusZamowienia;
 import pl.InternetowySklepMuzyczny.sklep.models.*;
 import pl.InternetowySklepMuzyczny.sklep.services.*;
 
+import java.awt.print.Printable;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +34,7 @@ public class AdminPanelController {
 
     @FXML
     TableView editClientTable, clientOrderTable, orderDetailsTable, bestClientsTable, albumEditTable, allAlbumsTable, bandsTable, genreTable, employeesTable, songTable, commentsTable, missingAlbums, ordersToPrepareTable, ordersToPrepareDetails
-            ,ordersDoneTable;
+            ,ordersDoneTable, raportFirstTable, raportSecondTable;
 
     @FXML
     TextField loginAddField, passwordAddField, nameAddField, secondnameAddField, emailAddField, cityAddField, streetAddField, houseNumberAddField, flatNumberAddField, zipCodeAddField, addGenreField,
@@ -52,7 +53,7 @@ public class AdminPanelController {
     @FXML
     TextArea opisTextArea;
     @FXML
-    DatePicker dateFrom, dateTo;
+    DatePicker dateFrom, dateTo, raportDateFrom, raportDateTo;
 
     @Autowired
     ZespolServiceImp zespolServiceImp;
@@ -643,15 +644,28 @@ public class AdminPanelController {
         ordersDoneTable.getItems().addAll(filteredZamowienie);
     }
     public void showRaport(){
-        TableColumn<String, String> ordersCount = new TableColumn<>("Ilość zamówień");
-        TableColumn<String, String> ordersValueCount = new TableColumn<>("Łączna wartość zamówień");
-        TableColumn<String, String> albumsSold = new TableColumn<>("Sprzedanych zamówień");
-        TableColumn<String, String> avarageNumberOfAlbums = new TableColumn<>("Średnia ilość albumów na zamówienie");
-        TableColumn<String, String> avarageOrderValue = new TableColumn<>("Średnia wartość zamówienia");
-        TableColumn<String, String> bestSellerAlbum = new TableColumn<>("Najlepiej sprzedający się album");
-        TableColumn<String, String> bestSellerBand = new TableColumn<>("Najczęściej wybierany zespół");
-        TableColumn<String, String> ordersCanceled = new TableColumn<>("Ilość odrzuconych zamówień");
-        TableColumn<String, String> bestEmployee = new TableColumn<>("Pracownik z największa ilością zrealizowanyc zamówień");
+        LocalDate localDate = raportDateFrom.getValue();
+        LocalDate tolocalDate =raportDateTo.getValue();
+        if(raportFirstTable.getColumns().isEmpty() && raportSecondTable.getColumns().isEmpty()){
+            TableColumn<String, String> ordersCount = new TableColumn<>("Ilość zamówień");
+            TableColumn<String, String> ordersValueCount = new TableColumn<>("Łączna wartość zamówień");
+            TableColumn<String, String> albumsSold = new TableColumn<>("Sprzedanych albumów");
+            TableColumn<String, String> avarageNumberOfAlbums = new TableColumn<>("Średnia ilość albumów na zamówienie");
+            TableColumn<String, String> avarageOrderValue = new TableColumn<>("Średnia wartość zamówienia");
+            TableColumn<String, String> bestSellerAlbum = new TableColumn<>("Najlepiej sprzedający się album");
+            TableColumn<String, String> bestSellerBand = new TableColumn<>("Najczęściej wybierany zespół");
+            TableColumn<String, String> ordersCanceled = new TableColumn<>("Ilość odrzuconych zamówień");
+            TableColumn<String, String> bestEmployee = new TableColumn<>("Pracownik z największa ilością zrealizowanyc zamówień");
+
+            ordersCount.setCellValueFactory(c-> new ReadOnlyStringWrapper(String.valueOf(zamowienieServiceImp.getOrdersCount(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), Date.from(tolocalDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant())))));
+
+            raportFirstTable.getColumns().addAll(ordersCount, ordersValueCount, albumsSold, avarageNumberOfAlbums);
+            raportSecondTable.getColumns().addAll(avarageOrderValue, bestSellerAlbum, bestSellerBand, ordersCanceled, bestEmployee);
+        }
+        raportFirstTable.getItems().clear();
+        raportFirstTable.getItems().add(null);
+
+
 
     }
 }
