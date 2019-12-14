@@ -27,7 +27,12 @@ public class KomentarzServiceImp implements  KomentarzService{
     }
 
     @Override
-    public void deleteComment(Integer id) {
-        komentarzRepository.deleteById(id);
+    public void delete(Komentarz k) {
+        komentarzRepository.delete(k);
+    }
+
+    @Override
+    public void save(Komentarz k) {
+        komentarzRepository.save(k);
     }
 }

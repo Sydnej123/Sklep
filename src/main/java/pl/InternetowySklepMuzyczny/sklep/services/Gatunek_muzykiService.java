@@ -7,4 +7,5 @@ import java.util.List;
 public interface Gatunek_muzykiService{
     List<Gatunek_muzyki> findAllGatunek();
     void save(Gatunek_muzyki gatunek_muzyki);
+    void delete(Gatunek_muzyki gatunek_muzyki);
 }

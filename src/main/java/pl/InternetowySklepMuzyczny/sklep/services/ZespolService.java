@@ -7,4 +7,5 @@ import java.util.ArrayList;
 public interface ZespolService {
     ArrayList<Zespol> findAll();
     void save(Zespol zespol);
+    void delete(Zespol zespol);
 }

@@ -25,5 +25,10 @@ public class ZespolServiceImp implements ZespolService {
         zespolRepository.save(zespol);
     }
 
+    @Override
+    public void delete(Zespol zespol) {
+        zespolRepository.delete(zespol);
+    }
+
 
 }

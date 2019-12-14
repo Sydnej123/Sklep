@@ -37,4 +37,9 @@ public class PracownikServiceImp implements PracownikService {
     public String getBestSeller(Date dateFrom, Date dateTo) {
         return pracownikRepository.getBestSeller(dateFrom, dateTo).isEmpty()?"Błąd":pracownikRepository.getBestSeller(dateFrom, dateTo).get(0);
     }
+
+    @Override
+    public void delete(Pracownik p) {
+        pracownikRepository.delete(p);
+    }
 }

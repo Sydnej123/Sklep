@@ -26,4 +26,9 @@ public class Gatunek_muzykiServiceImp implements  Gatunek_muzykiService{
         gatunek_muzykiRepository.save(gatunek_muzyki);
     }
 
+    @Override
+    public void delete(Gatunek_muzyki gatunek_muzyki) {
+        gatunek_muzykiRepository.delete(gatunek_muzyki);
+    }
+
 }

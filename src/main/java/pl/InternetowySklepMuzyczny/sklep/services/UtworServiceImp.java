@@ -24,4 +24,9 @@ public class UtworServiceImp implements  UtworService {
     public void save(Utwor utwor) {
         utworRepository.save(utwor);
     }
+
+    @Override
+    public void delete(Utwor utwor) {
+        utworRepository.delete(utwor);
+    }
 }

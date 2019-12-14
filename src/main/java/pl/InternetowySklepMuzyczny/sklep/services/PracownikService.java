@@ -10,4 +10,5 @@ public interface PracownikService {
     void save(Pracownik pracownik);
     List<Pracownik> findAll();
     String getBestSeller(Date dateFrom, Date dateTo);
+    void delete(Pracownik p);
 }

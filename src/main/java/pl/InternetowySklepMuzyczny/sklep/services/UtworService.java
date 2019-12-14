@@ -7,4 +7,5 @@ import java.util.List;
 public interface UtworService {
     List<Utwor> findAll();
     void save(Utwor utwor);
+    void delete(Utwor utwor);
 }
