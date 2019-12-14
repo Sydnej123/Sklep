@@ -54,5 +54,10 @@ public class AlbumServiceImp implements AlbumService{
         return albumRepository.missingAlbums();
     }
 
+    @Override
+    public void delete(Album a) {
+        albumRepository.delete(a);
+    }
+
 
 }

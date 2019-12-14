@@ -12,4 +12,5 @@ public interface AlbumService {
     Album findById(Integer id);
     void save(Album album);
     List<Album> missingAlbums();
+    void delete(Album a);
 }

@@ -57,4 +57,9 @@ public class KlientServiceImp implements KlientService{
         return klientRepository.findById(id).get().getKlient_login();
     }
 
+    @Override
+    public void delete(Klient klient) {
+        klientRepository.delete(klient);
+    }
+
 }

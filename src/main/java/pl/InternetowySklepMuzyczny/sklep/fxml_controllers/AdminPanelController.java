@@ -6,7 +6,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Callback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -519,8 +522,7 @@ public class AdminPanelController {
         commentsTable.getItems().remove(commentToDelate);
     }
 
-    public void editComment() {
-    }
+
 
 
     public void showMissingAlbums() {
@@ -678,6 +680,291 @@ public class AdminPanelController {
 
 
     }
+    public void editClient(){
+
+        if(editClientTable.getSelectionModel().getSelectedItem() != null){
+            Klient klientToEdit = (Klient) editClientTable.getSelectionModel().getSelectedItem();
+            Dialog<Klient> dialog = new Dialog<>();
+            dialog.setTitle("Edytuj klienta");
+            dialog.setResizable(false);
+            dialog.setWidth(850.0);
+            dialog.setHeight(200.0);
+            Label label1 = new Label("Login: ");
+            Label label2 = new Label("Hasło: ");
+            Label label3 = new Label("Imie: ");
+            Label label4 = new Label("Nazwisko: ");
+            Label label5 = new Label("E-mail: ");
+            Label label6 = new Label("Miasto: ");
+            Label label7 = new Label("Ulica:  ");
+            Label label8 = new Label("Numer domu:  ");
+            Label label9 = new Label("Numer mieszkania:  ");
+            Label label10 = new Label("Kod pocztowy: ");
+
+            TextField text1 = new TextField();
+            TextField text2 = new TextField();
+            TextField text3 = new TextField();
+            TextField text4 = new TextField();
+            TextField text5 = new TextField();
+            TextField text6 = new TextField();
+            TextField text7 = new TextField();
+            TextField text8 = new TextField();
+            TextField text9 = new TextField();
+            TextField text10 = new TextField();
+            text1.setText(klientToEdit.getKlient_login());
+            text2.setText(klientToEdit.getKlient_haslo());
+            text3.setText(klientToEdit.getKlient_imie());
+            text4.setText(klientToEdit.getKlient_nazwisko());
+            text5.setText(klientToEdit.getKlient_email());
+            text6.setText(klientToEdit.getKlient_miasto());
+            text7.setText(klientToEdit.getKlient_ulica());
+            text8.setText(klientToEdit.getKlient_nr_domu().toString());
+            text9.setText(klientToEdit.getKlient_nr_mieszkania().toString());
+            text10.setText(klientToEdit.getKlient_kod_pocztowy());
+            GridPane grid = new GridPane();
+            grid.setPrefWidth(1000);
+            grid.add(label1, 1, 1);
+            grid.add(text1, 1, 2);
+            grid.add(label2, 2, 1);
+            grid.add(text2, 2, 2);
+
+            grid.add(label3, 3, 1);
+            grid.add(text3, 3, 2);
+
+            grid.add(label4, 4, 1);
+            grid.add(text4, 4, 2);
+            grid.add(label5, 5, 1);
+            grid.add(text5, 5, 2);
+            grid.add(label6, 6, 1);
+            grid.add(text6, 6, 2);
+            grid.add(label7, 7, 1);
+            grid.add(text7, 7, 2);
+            grid.add(label8, 8, 1);
+            grid.add(text8, 8, 2);
+            grid.add(label9, 9, 1);
+            grid.add(text9, 9, 2);
+            grid.add(label10, 10, 1);
+            grid.add(text10, 10, 2);
+            grid.setMaxSize(800,200);
+            dialog.getDialogPane().setContent(grid);
+
+
+            ButtonType buttonTypeOk = new ButtonType("Edytuj", ButtonBar.ButtonData.OK_DONE);
+            ButtonType buttonCancel = new ButtonType("Anuluj", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+            dialog.getDialogPane().getButtonTypes().add(buttonCancel);
+
+            dialog.setResultConverter(new Callback<ButtonType, Klient>() {
+                @Override
+                public Klient call(ButtonType b) {
+
+                    if (b == buttonTypeOk) {
+                        editClientTable.getItems().remove(klientToEdit);
+                        klientToEdit.setKlient_login(text1.getText());
+                        klientToEdit.setKlient_haslo(text2.getText());
+                        klientToEdit.setKlient_imie(text3.getText());
+                        klientToEdit.setKlient_nazwisko(text4.getText());
+                        klientToEdit.setKlient_email(text5.getText());
+                        klientToEdit.setKlient_miasto(text6.getText());
+                        klientToEdit.setKlient_ulica(text7.getText());
+                        klientToEdit.setKlient_nr_domu(Integer.parseInt(text8.getText()));
+                        klientToEdit.setKlient_nr_mieszkania(Integer.parseInt(text9.getText()));
+                        klientToEdit.setKlient_kod_pocztowy(text10.getText());
+                        klientServiceImp.save(klientToEdit);
+                        editClientTable.getItems().add(klientToEdit);
+                        return null;
+                    }
+
+                    return null;
+                }
+            });
+
+            Optional<Klient> result = dialog.showAndWait();
+
+            if (result.isPresent()) {
+
+                //actionStatus.setText("Result: " + result.get());
+            }
+
+        }
+
+    }
+    public void deleteClient(){
+        if(editClientTable.getSelectionModel().getSelectedItem() != null) {
+            Klient klientToEdit = (Klient) editClientTable.getSelectionModel().getSelectedItem();
+            Dialog<Klient> dialog = new Dialog<>();
+            dialog.setTitle("Usuń klienta");
+            dialog.setResizable(false);
+            dialog.setContentText("Klient zostanie stale usunięty z bazy danych. Czy na pewno chcesz usunąć klienta?");
+            ButtonType buttonTypeOk = new ButtonType("Usuń", ButtonBar.ButtonData.OK_DONE);
+            ButtonType buttonCancel = new ButtonType("Anuluj", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+            dialog.getDialogPane().getButtonTypes().add(buttonCancel);
+
+            dialog.setResultConverter(new Callback<ButtonType, Klient>() {
+                @Override
+                public Klient call(ButtonType b) {
+
+                    if (b == buttonTypeOk) {
+                        editClientTable.getItems().remove(klientToEdit);
+                        klientServiceImp.delete(klientToEdit);
+                        return null;
+                    }
+
+                    return null;
+                }
+            });
+
+            Optional<Klient> result = dialog.showAndWait();
+
+            if (result.isPresent()) {
+
+                //actionStatus.setText("Result: " + result.get());
+            }
+        }
+    }
+    public void editAlbum() {
+        if (albumEditTable.getSelectionModel().getSelectedItem() != null) {
+            Album albumToEdit =(Album) albumEditTable.getSelectionModel().getSelectedItem();
+            Dialog<Album> dialog = new Dialog<>();
+            dialog.setTitle("Edytuj album");
+            dialog.setResizable(false);
+            dialog.setWidth(850.0);
+            dialog.setHeight(200.0);
+            Label label1 = new Label("Gatunek: ");
+            Label label2 = new Label("Zespol: ");
+            Label label3 = new Label("Nazwa albmu: ");
+            Label label4 = new Label("Cena: ");
+            Label label5 = new Label("Opis: ");
+            Label label6 = new Label("Zdjęcie_scieżka: ");
+
+            ChoiceBox<Gatunek_muzyki> gatunek = new ChoiceBox<>();
+            gatunek.getItems().addAll(gatunek_muzykiServiceImp.findAllGatunek());
+            ChoiceBox<Zespol> zespol = new ChoiceBox<>();
+            zespol.getItems().addAll(zespolServiceImp.findAll());
+            gatunek.setValue(albumToEdit.getGatunek_muzyki());
+            zespol.setValue(albumToEdit.getZespol());
+            TextField text3 = new TextField();
+            TextField text4 = new TextField();
+            TextField text5 = new TextField();
+            TextField text6 = new TextField();
+            text3.setText(albumToEdit.getAlbum_nazwa());
+            text4.setText(albumToEdit.getAlbum_cena()+"");
+            text5.setText(albumToEdit.getAlbum_opis());
+            text6.setText(albumToEdit.getAlbum_zdjecie_sciezka());
+            GridPane grid = new GridPane();
+            grid.setPrefWidth(1000);
+            grid.add(label1, 1, 1);
+            grid.add(gatunek, 1, 2);
+            grid.add(label2, 2, 1);
+            grid.add(zespol, 2, 2);
+            grid.add(label3, 3, 1);
+            grid.add(text3, 3, 2);
+            grid.add(label4, 4, 1);
+            grid.add(text4, 4, 2);
+            grid.add(label5, 5, 1);
+            grid.add(text5, 5, 2);
+            grid.add(label6, 6, 1);
+            grid.add(text6, 6, 2);
+            grid.setMaxSize(800, 200);
+            dialog.getDialogPane().setContent(grid);
+
+
+            ButtonType buttonTypeOk = new ButtonType("Edytuj", ButtonBar.ButtonData.OK_DONE);
+            ButtonType buttonCancel = new ButtonType("Anuluj", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+            dialog.getDialogPane().getButtonTypes().add(buttonCancel);
+
+            dialog.setResultConverter(new Callback<ButtonType, Album>() {
+                @Override
+                public Album call(ButtonType b) {
+
+                    if (b == buttonTypeOk) {
+                        albumEditTable.getItems().remove(albumToEdit);
+                        albumToEdit.setGatunek_muzyki(gatunek.getValue());
+                        albumToEdit.setZespol(zespol.getValue());
+                        albumToEdit.setAlbum_nazwa(text3.getText());
+                        albumToEdit.setAlbum_cena(Float.parseFloat(text4.getText()));
+                        albumToEdit.setAlbum_opis(text5.getText());
+                        albumToEdit.setAlbum_zdjecie_sciezka(text6.getText());
+                        albumEditTable.getItems().add(albumToEdit);
+                        albumServiceImp.save(albumToEdit);
+                        return null;
+                    }
+
+                    return null;
+                }
+            });
+
+            Optional<Album> result = dialog.showAndWait();
+
+            if (result.isPresent()) {
+
+                //actionStatus.setText("Result: " + result.get());
+            }
+
+        }
+    }
+    public void deleteAlbum(){
+        if(albumEditTable.getSelectionModel().getSelectedItem() != null) {
+            Album albumToEdit = (Album) albumEditTable.getSelectionModel().getSelectedItem();
+            Dialog<Album> dialog = new Dialog<>();
+            dialog.setTitle("Usuń album");
+            dialog.setResizable(false);
+            dialog.setContentText("Album zostanie stale usunięty z bazy danych. Czy na pewno chcesz usunąć album?");
+            ButtonType buttonTypeOk = new ButtonType("Usuń", ButtonBar.ButtonData.OK_DONE);
+            ButtonType buttonCancel = new ButtonType("Anuluj", ButtonBar.ButtonData.CANCEL_CLOSE);
+            dialog.getDialogPane().getButtonTypes().add(buttonTypeOk);
+            dialog.getDialogPane().getButtonTypes().add(buttonCancel);
+
+            dialog.setResultConverter(new Callback<ButtonType, Album>() {
+                @Override
+                public Album call(ButtonType b) {
+
+                    if (b == buttonTypeOk) {
+                        albumEditTable.getItems().remove(albumToEdit);
+                        albumServiceImp.delete(albumToEdit);
+                        return null;
+                    }
+
+                    return null;
+                }
+            });
+
+            Optional<Album> result = dialog.showAndWait();
+
+            if (result.isPresent()) {
+
+                //actionStatus.setText("Result: " + result.get());
+            }
+        }
+    }
+    public void editBand(){
+
+    }
+    public void deleteBand(){
+
+    }
+    public void editSong(){
+
+    }
+    public void deleteSong(){
+
+    }
+    public void editGenre(){
+
+    }
+    public void deleteGenre(){
+
+    }
+    public void editEmployee(){
+
+    }
+    public void deleteEmployee(){
+
+    }
+    public void editComment() {
+    }
 }
+
 
 
