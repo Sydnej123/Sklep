@@ -52,7 +52,7 @@ public class AdminPanelController {
     Button filterButton;
 
     @FXML
-    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox, addSongAlbumChoiseBox, commentAlbumChoiseBox, orderStatusChoiseBox, employeeChoiseBox, clientChoiseBox;
+    ChoiceBox klientChoise, gatunekTableFilter, zespolTableFilter, addAlbumGatunek, addAlbumZespol, addEmployeePerrmisionsChoiseBox, addSongAlbumChoiseBox, commentAlbumChoiseBox, orderStatusChoiseBox, employeeChoiseBox, clientChoiseBox, statusChoiseBox;
 
     @FXML
     TextArea opisTextArea;
@@ -592,6 +592,8 @@ public class AdminPanelController {
             employeeChoiseBox.getItems().add(null);
             clientChoiseBox.getItems().addAll(klientServiceImp.findAll());
             clientChoiseBox.getItems().add(null);
+            statusChoiseBox.getItems().addAll(new String[]{"Zrealizowane", "Odrzucone"});
+            statusChoiseBox.setValue("Zrealizowane");
             TableColumn<Zamowienie, String> orderIdColumn = new TableColumn<>("ID");
             TableColumn<Zamowienie, String> orderEmployeeColumn = new TableColumn<>("Pracownik");
             TableColumn<Zamowienie, String> clientColumn = new TableColumn<>("Klient");
@@ -611,6 +613,8 @@ public class AdminPanelController {
         }
         ordersDoneTable.getItems().clear();
         ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(1));
+        ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(2));
+
 
     }
     public void filterOrdersDone(){
@@ -619,9 +623,12 @@ public class AdminPanelController {
         ordersDoneTable.getItems().clear();
         Pracownik pracownik = (Pracownik) employeeChoiseBox.getValue();
         Klient klient = (Klient) clientChoiseBox.getValue();
+        String value = (String) statusChoiseBox.getValue();
         //ordersDoneTable.getItems().addAll(zamowienieServiceImp.getOrderByStatus(0));
-        List<Zamowienie> filteredZamowienie;
-        filteredZamowienie = zamowienieServiceImp.getOrderByStatus(1).stream()
+        List<Zamowienie> filteredZamowienie = new ArrayList<>();
+        filteredZamowienie.addAll(zamowienieServiceImp.getOrderByStatus(1));
+        filteredZamowienie.addAll(zamowienieServiceImp.getOrderByStatus(2));
+        filteredZamowienie = filteredZamowienie.stream()
                 .filter(c-> (klient != null)?(c.getKlient().getKlient_id() == klient.getKlient_id()):true)
                 .filter(c -> (pracownik != null)?(c.getPracownik().getPracownik_id() == pracownik.getPracownik_id()):true)
                 .filter( c-> (!minValue.getText().isEmpty())?(c.getZamowienie_wartosc() >= Double.parseDouble(minValue.getText())):true)
@@ -632,6 +639,7 @@ public class AdminPanelController {
                 .filter(c -> (dateTo.getValue() != null)?(c.getZamowienie_data().before(java.util.Date.from(dateTo.getValue().atStartOfDay()
                         .atZone(ZoneId.systemDefault())
                         .toInstant()))):true)
+                .filter(c->(value.isEmpty()?true:(value.equals("Zrealizowane")?c.getZamowienie_status()==1:c.getZamowienie_status()==2)) )
                 .collect(Collectors.toList());
         ordersDoneTable.getItems().clear();
         ordersDoneTable.getItems().addAll(filteredZamowienie);
@@ -1073,7 +1081,7 @@ public class AdminPanelController {
     }
     public void editGenre(){
         if (genreTable.getSelectionModel().getSelectedItem() != null) {
-            Gatunek_muzyki genreToEdit = (Gatunek_muzyki) songTable.getSelectionModel().getSelectedItem();
+            Gatunek_muzyki genreToEdit = (Gatunek_muzyki) genreTable.getSelectionModel().getSelectedItem();
             Dialog<Gatunek_muzyki> dialog = new Dialog<>();
             dialog.setTitle("Edytuj gatunek muzyki");
             dialog.setResizable(false);
@@ -1234,7 +1242,7 @@ public class AdminPanelController {
     }
     public void editComment() {
         if (commentsTable.getSelectionModel().getSelectedItem() != null) {
-            Komentarz commentToEdit = (Komentarz) employeesTable.getSelectionModel().getSelectedItem();
+            Komentarz commentToEdit = (Komentarz) commentsTable.getSelectionModel().getSelectedItem();
             Dialog<Pracownik> dialog = new Dialog<>();
             dialog.setTitle("Edytuj komentarz");
             dialog.setResizable(false);

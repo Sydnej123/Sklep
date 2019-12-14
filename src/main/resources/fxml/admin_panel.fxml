@@ -345,6 +345,8 @@
                   <Label layoutX="668.0" layoutY="584.0" text="od" />
                   <Label layoutX="882.0" layoutY="584.0" text="do" />
                   <Label layoutX="626.0" layoutY="584.0" text="zł" />
+                  <ChoiceBox fx:id="statusChoiseBox" layoutX="81.0" layoutY="630.0" prefWidth="150.0" />
+                  <Label layoutX="81.0" layoutY="613.0" text="Status zamówienia:" />
                </children></AnchorPane>
         </content>
       </Tab>

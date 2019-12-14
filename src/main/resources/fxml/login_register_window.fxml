@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="vBoxScene" fx:id="vBoxScene" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController">
+<VBox id="vBoxScene" fx:id="vBoxScene" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -106,11 +106,11 @@
                         </GridPane>
                      </content>
                   </Tab>
-                  <Tab text="Pracownik">
+                  <Tab fx:id="pracownikTab" closable="false" text="Pracownik">
                     <content>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Button fx:id="confirmButton" layoutX="351.0" layoutY="173.0" mnemonicParsing="false" onAction="#openAdminPanel" text="Potwierdź" />
+                              <Button fx:id="confirmButton" layoutX="351.0" layoutY="190.0" mnemonicParsing="false" onAction="#openAdminPanel" text="Potwierdź" />
                               <Label layoutX="225.0" layoutY="58.0" text="ID:" />
                               <TextField fx:id="pracownikID" layoutX="204.0" layoutY="84.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="220.0" />
                               <Label layoutX="220.0" layoutY="120.0" text="Kod:" />

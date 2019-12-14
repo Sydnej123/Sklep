@@ -38,7 +38,7 @@ public class LoginScreenController implements Initializable {
     @FXML
     TabPane tabPane;
     @FXML
-    Tab logowanieTab;
+    Tab logowanieTab, pracownikTab;
     @FXML
     Tab rejestracjaTab;
     @FXML
@@ -130,8 +130,12 @@ public class LoginScreenController implements Initializable {
         if(event.getCode() == KeyCode.ENTER){
             if(logowanieTab.isSelected()){
                 login();
-            }else
+            }else if(rejestracjaTab.isSelected())
                 register();
+            else if(pracownikTab.isSelected()){
+                openAdminPanel();
+            }
+
         }
 
 
@@ -270,6 +274,7 @@ public class LoginScreenController implements Initializable {
 
         if(pracownikID.getText() != null && pracownikKod.getText() !=null && numeric.matcher(pracownikID.getText()).matches()) {
             if(Integer.parseInt(pracownikID.getText()) > 0 && pracownikServiceImp.getPracownikByID(Integer.valueOf(pracownikID.getText())).get(0).getPracownik_kod().equals(pracownikKod.getText())){
+                Session.userID = Integer.parseInt(pracownikID.getText());
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/admin_panel.fxml"));
                 fxmlLoader.setControllerFactory(springContext::getBean);
                 Parent root = null;
