@@ -95,15 +95,15 @@ public class MainScreenController  implements Initializable {
 
         i=0;
         ImageView image;
-        Image  tempImage =new Image("Genesis83.jpg");
+        Image  tempImage = null;
         GridPane explorerGrid = new GridPane();
         for(Album album : albums){
             temporaryBorderPane.add(new BorderPane());
             image = new ImageView();
             try {
-                tempImage = new Image(album.getAlbum_zdjecie_sciezka(), 340, 340, false, false);
+                System.out.println(this.getClass().getClassLoader().getResource("album_covers/"+album.getAlbum_zdjecie_sciezka()));
+                tempImage = new Image(this.getClass().getClassLoader().getResourceAsStream("album_covers/"+album.getAlbum_zdjecie_sciezka()), 340, 340, false, false);
             }catch(Exception e){
-                System.out.println(album.getAlbum_zdjecie_sciezka());
                 e.printStackTrace();
             }
             image.setImage(tempImage);
@@ -180,6 +180,9 @@ public class MainScreenController  implements Initializable {
     public void filterByGenre(Integer genreID){
         filteredAlbums.addAll(albums.stream().filter(album -> album.getGatunek_muzyki().getGatunek_id() == genreID).collect(Collectors.toList()));
     }
+    public void filterByBand(){
+
+    }
 
 
 
@@ -191,15 +194,14 @@ public class MainScreenController  implements Initializable {
         List<Button> addToChartButtons = new ArrayList<>();
         int i = 0;
         ImageView image;
-        Image tempImage = new Image("Genesis83.jpg");
+        Image tempImage = null;
         GridPane explorerGrid = new GridPane();
         for (Album album : albumsToPaint) {
             temporaryBorderPane.add(new BorderPane());
             image = new ImageView();
             try {
-                tempImage = new Image(album.getAlbum_zdjecie_sciezka(), 340, 340, false, false);
+                tempImage = new Image(this.getClass().getClassLoader().getResourceAsStream("album_covers/"+album.getAlbum_zdjecie_sciezka()), 340, 340, false, false);
             } catch (Exception e) {
-                System.out.println(album.getAlbum_zdjecie_sciezka());
                 e.printStackTrace();
             }
             image.setImage(tempImage);
@@ -240,6 +242,15 @@ public class MainScreenController  implements Initializable {
             i++;
         }
         explorerScrollPane.setContent(explorerGrid);
+
+    }
+    public void searchForAlbum(){
+
+    }
+    public void showAccountDetails(){
+
+    }
+    public void showChart(){
 
     }
 }
