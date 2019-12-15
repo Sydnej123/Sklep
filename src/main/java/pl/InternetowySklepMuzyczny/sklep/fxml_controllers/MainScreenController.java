@@ -2,15 +2,25 @@ package pl.InternetowySklepMuzyczny.sklep.fxml_controllers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import pl.InternetowySklepMuzyczny.sklep.Session;
@@ -22,11 +32,15 @@ import pl.InternetowySklepMuzyczny.sklep.services.Gatunek_muzykiServiceImp;
 import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
 import pl.InternetowySklepMuzyczny.sklep.services.ZespolServiceImp;
 
+import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static pl.InternetowySklepMuzyczny.sklep.fxml_controllers.LoginScreenController.springContext;
 
 @Controller
 public class MainScreenController  implements Initializable {
@@ -44,6 +58,10 @@ public class MainScreenController  implements Initializable {
 
     @FXML
     Label loggedAsLabel;
+    @FXML
+    Spinner minimalValue,maximumValue;
+    @FXML
+    TextField searchTextField;
     @Autowired
     private Gatunek_muzykiServiceImp gatunek_muzykiServiceImp;
 
@@ -57,32 +75,34 @@ public class MainScreenController  implements Initializable {
     private ZespolServiceImp zespolServiceImp;
 
     private final String paneButtonStyle = "-fx-width: 100px;";
-
+    private List<CheckBox> genreBoxes;
+    private List<CheckBox> bandBoxes;
+    private List<Album> filteredByBand = new ArrayList<>();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         loggedAsLabel.setText("Zalogowano jako: "+klientService.findLoginByID(Session.userID).get(0));
         GridPane genreGridPane = new GridPane();
         GridPane zespolGridPane = new GridPane();
-        List<CheckBox> temporaryBoxes = new ArrayList<>();
+        genreBoxes = new ArrayList<>();
         List<Gatunek_muzyki> k = gatunek_muzykiServiceImp.findAllGatunek();
         int i =0;
         for(Gatunek_muzyki gatunek: k){
-            temporaryBoxes.add(new CheckBox());
-            temporaryBoxes.get(i).setText(gatunek.getGatunek_nazwa()+" ("+albumServiceImp.countGatunek(gatunek.getGatunek_id())+")");
-            temporaryBoxes.get(i).setPrefSize(200,25);
-            temporaryBoxes.get(i).setTextAlignment(TextAlignment.LEFT);
-            genreGridPane.addRow(i,temporaryBoxes.get(i));
+            genreBoxes.add(new CheckBox());
+            genreBoxes.get(i).setText(gatunek.getGatunek_nazwa()+" ("+albumServiceImp.countGatunek(gatunek.getGatunek_id())+")");
+            genreBoxes.get(i).setPrefSize(200,25);
+            genreBoxes.get(i).setTextAlignment(TextAlignment.LEFT);
+            genreGridPane.addRow(i,genreBoxes.get(i));
             i++;
         }
         i=0;
         ArrayList<Zespol> zespols = zespolServiceImp.findAll();
-        List<CheckBox> temporaryArtists = new ArrayList<>();
+        bandBoxes = new ArrayList<>();
         for(Zespol zespol: zespols){
-            temporaryArtists.add(new CheckBox());
-            temporaryArtists.get(i).setText(zespol.getZespol_nazwa()+" ("+albumServiceImp.countBandAlbums(zespol.getZespol_id())+")");
-            temporaryArtists.get(i).setPrefSize(200,25);
-            temporaryArtists.get(i).setTextAlignment(TextAlignment.LEFT);
-            zespolGridPane.addRow(i,temporaryArtists.get(i));
+            bandBoxes.add(new CheckBox());
+            bandBoxes.get(i).setText(zespol.getZespol_nazwa()+" ("+albumServiceImp.countBandAlbums(zespol.getZespol_id())+")");
+            bandBoxes.get(i).setPrefSize(200,25);
+            bandBoxes.get(i).setTextAlignment(TextAlignment.LEFT);
+            zespolGridPane.addRow(i,bandBoxes.get(i));
             i++;
         }
         zespolPane.setContent(zespolGridPane);
@@ -118,6 +138,12 @@ public class MainScreenController  implements Initializable {
 
             addToChartButtons.add(new Button());
             addToChartButtons.get(i).setText("Dodaj do koszyka");
+            addToChartButtons.get(i).setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    addToChart(album);
+                }
+            });
             albumNameLabel = new Label();
             albumNameLabel.setText("Nazwa albumu");
             bandLabel = new Label();
@@ -152,39 +178,50 @@ public class MainScreenController  implements Initializable {
 
         }
         explorerScrollPane.setContent(explorerGrid);
-        for(CheckBox box: temporaryBoxes){
-            box.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if(box.isSelected()){
-                        filterByGenre(temporaryBoxes.indexOf(box)+1);
-                    }else {
-                        removeGenreFilter(temporaryBoxes.indexOf(box)+1);
-
-                    }
-                    if(filteredAlbums.isEmpty()){
-                        repaintExplorer(albums);
-                    }else
-                    repaintExplorer(filteredAlbums);
-                }
-            });
+        minimalValue.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,150,0));
+        minimalValue.setEditable(true);
+        maximumValue.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0,150,100));
+        maximumValue.setEditable(true);
         }
 
 
-    }
 
-    private void removeGenreFilter(int genreID) {
-        filteredAlbums.removeAll(albums.stream().filter(album -> album.getGatunek_muzyki().getGatunek_id() == genreID).collect(Collectors.toList()));
-    }
-
-    public void filterByGenre(Integer genreID){
-        filteredAlbums.addAll(albums.stream().filter(album -> album.getGatunek_muzyki().getGatunek_id() == genreID).collect(Collectors.toList()));
-    }
-    public void filterByBand(){
+    private void addToChart(Album album) {
 
     }
 
+    public void filterAlbums(){
+            filteredAlbums.clear();
+            filteredByBand.clear();
+            for(CheckBox checkBox:genreBoxes){
+                if(checkBox.isSelected()){
+                    filteredAlbums.addAll(albums.stream().filter(album -> album.getGatunek_muzyki().getGatunek_id() == genreBoxes.indexOf(checkBox)+1).collect(Collectors.toList()));
+                }
 
+            }
+            if(filteredAlbums.isEmpty()){
+                filteredAlbums = albumServiceImp.findAll();
+            }
+            filteredByBand.addAll(filteredAlbums) ;
+            for(CheckBox checkBox: bandBoxes){
+                if(!checkBox.isSelected()){
+                    filteredAlbums.removeAll(filteredAlbums.stream().filter(album -> album.getZespol().getZespol_id() == bandBoxes.indexOf(checkBox)+1).collect(Collectors.toList()));
+                }
+            }
+            if(filteredAlbums.isEmpty()){
+                filteredAlbums.addAll(filteredByBand);
+            }
+
+
+            if(minimalValue.getValue() != null){
+                filteredAlbums = filteredAlbums.stream().filter(album -> album.getAlbum_cena() >= (Double) minimalValue.getValue()).collect(Collectors.toList());
+            }
+            if(maximumValue.getValue() != null){
+                filteredAlbums = filteredAlbums.stream().filter(album -> album.getAlbum_cena() <= (Double)maximumValue.getValue()).collect(Collectors.toList());
+            }
+
+            repaintExplorer(filteredAlbums);
+    }
 
     public void repaintExplorer(List<Album> albumsToPaint) {
 
@@ -245,12 +282,27 @@ public class MainScreenController  implements Initializable {
 
     }
     public void searchForAlbum(){
-
+        if(!searchTextField.getText().isEmpty()){
+            repaintExplorer(albums.stream().filter(album -> album.getZespol().getZespol_nazwa().toUpperCase().equals(searchTextField.getText().toUpperCase())
+                    || album.getGatunek_muzyki().getGatunek_nazwa().toUpperCase().equals(searchTextField.getText().toUpperCase())
+                    || album.getAlbum_nazwa().toUpperCase().equals(searchTextField.getText().toUpperCase())).collect(Collectors.toList()));
+        }else{
+            repaintExplorer(albums);
+        }
     }
-    public void showAccountDetails(){
-
+    public void showAccountDetails(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/user_panel.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        Scene clientScene = new Scene(fxmlLoader.load());
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(clientScene);
     }
-    public void showChart(){
-
+    public void showChart(ActionEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/chart_panel.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        Scene clientScene = new Scene(fxmlLoader.load());
+        Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        window.setScene(clientScene);
     }
+
 }
