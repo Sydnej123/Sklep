@@ -24,9 +24,7 @@ import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import pl.InternetowySklepMuzyczny.sklep.Session;
-import pl.InternetowySklepMuzyczny.sklep.models.Album;
-import pl.InternetowySklepMuzyczny.sklep.models.Gatunek_muzyki;
-import pl.InternetowySklepMuzyczny.sklep.models.Zespol;
+import pl.InternetowySklepMuzyczny.sklep.models.*;
 import pl.InternetowySklepMuzyczny.sklep.services.AlbumServiceImp;
 import pl.InternetowySklepMuzyczny.sklep.services.Gatunek_muzykiServiceImp;
 import pl.InternetowySklepMuzyczny.sklep.services.KlientServiceImp;
@@ -187,6 +185,12 @@ public class MainScreenController  implements Initializable {
 
 
     private void addToChart(Album album) {
+        if(Cart.getAlbumsInCart().stream().noneMatch(c-> c.getAlbum() == album)){
+            Cart.getAlbumsInCart().add(new AlbumCart(album, 1));
+            // dodać komunikat dodano do koszyka
+        }else{
+            System.out.println("Koszyk zawiera już"); // zamienić w dialog
+        }
 
     }
 

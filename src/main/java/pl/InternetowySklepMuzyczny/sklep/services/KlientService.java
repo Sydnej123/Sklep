@@ -14,4 +14,5 @@ public interface KlientService {
     ArrayList<Klient> getOrderedClients();
     String getKlientNameById(Integer id);
     void delete(Klient klient);
+    Klient findById(Integer id);
 }

@@ -27,16 +27,16 @@
                   <Label layoutX="70.0" layoutY="477.0" text="Kod pocztowy:" />
                   <Button layoutX="1190.0" layoutY="43.0" mnemonicParsing="false" onAction="#backToMainScreen" text="Wróć" />
                   <Button layoutX="452.0" layoutY="436.0" mnemonicParsing="false" onAction="#editUserData" text="Edytuj" />
-                  <Button layoutX="404.0" layoutY="56.0" mnemonicParsing="false" onAction="#showPassword" text="Pokaż" />
+                  <Button layoutX="404.0" layoutY="56.0" mnemonicParsing="false" onAction="#editPassword" text="Zmień hasło" />
                   <TextField fx:id="loginField" editable="false" layoutX="190.0" layoutY="64.0" />
                   <TextField fx:id="passwordField" editable="false" layoutX="190.0" layoutY="119.0" />
                   <TextField fx:id="emailField" editable="false" layoutX="190.0" layoutY="157.0" />
                   <TextField fx:id="nameField" editable="false" layoutX="190.0" layoutY="201.0" />
                   <TextField fx:id="secondNameField" editable="false" layoutX="190.0" layoutY="254.0" />
                   <TextField fx:id="cityField" layoutX="190.0" layoutY="296.0" />
-                  <TextField fx:id="streetField" editable="false" layoutX="190.0" layoutY="333.0" />
-                  <TextField fx:id="houseNumberField" editable="false" layoutX="190.0" layoutY="376.0" />
-                  <TextField fx:id="flatNumberField" editable="false" layoutX="190.0" layoutY="411.0" />
+                  <TextField fx:id="streetField" layoutX="190.0" layoutY="333.0" />
+                  <TextField fx:id="houseNumberField" layoutX="190.0" layoutY="376.0" />
+                  <TextField fx:id="flatNumberField" layoutX="190.0" layoutY="411.0" />
                   <TextField fx:id="zipCodeField" layoutX="169.0" layoutY="473.0" />
                </children></AnchorPane>
       </content>

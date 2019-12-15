@@ -40,6 +40,16 @@ public class Szczegoly_zamowienia {
     }
 
     Integer szcze_zam_ilosc;
+
+    public Double getSzcze_zam_cena_jednostki() {
+        return szcze_zam_cena_jednostki;
+    }
+
+    public void setSzcze_zam_cena_jednostki(Double szcze_zam_cena_jednostki) {
+        this.szcze_zam_cena_jednostki = szcze_zam_cena_jednostki;
+    }
+
+    Double szcze_zam_cena_jednostki;
     @ManyToOne
     @JoinColumn(name = "zamowienie_id", insertable = false, updatable = false)
     private Zamowienie zamowienie;
