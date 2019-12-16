@@ -195,6 +195,7 @@ public class ChartPanelController implements Initializable {
         }else{
             Alert alert = new Alert(Alert.AlertType.WARNING, "Brak towarów w koszyku.", ButtonType.OK);
             alert.showAndWait();
+
         }
 
     }
