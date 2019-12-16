@@ -13,4 +13,5 @@ public interface Szczegoly_zamowieniaService {
     List<Szczegoly_zamowienia> findByZamowienieId(Integer id);
     Long getAlbumsCount(Date dateFrom, Date dateTo);
     String getBestSellerAlbumName(Date dateFrom, Date dateTo);
+    void save(Szczegoly_zamowienia szczegoly_zamowienia);
 }

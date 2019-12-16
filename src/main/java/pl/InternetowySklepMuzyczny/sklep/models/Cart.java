@@ -15,5 +15,10 @@ public class Cart {
 
     private static List<AlbumCart> albumsInCart = new ArrayList<>();
 
-
-}
+    public static double countAndgetValue() {
+        double valueToShow = 0;
+        for(AlbumCart albumCart: albumsInCart){
+            valueToShow += albumCart.getAlbum().getAlbum_cena() * albumCart.getAlbumCount();
+    }
+        return valueToShow;
+}}

@@ -9,6 +9,10 @@ import java.util.Set;
 @Entity
 
 public class Zamowienie {
+    public Integer getZamowienie_id() {
+        return zamowienie_id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer zamowienie_id;
@@ -46,13 +50,9 @@ public class Zamowienie {
     }
 
     Integer zamowienie_status;
-    public int getZamowienie_id() {
-        return zamowienie_id;
-    }
 
-    public void setZamowienie_id(int zamowienie_id) {
-        this.zamowienie_id = zamowienie_id;
-    }
+
+
 
     public Pracownik getPracownik() {
         return pracownik;

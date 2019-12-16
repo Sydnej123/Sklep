@@ -10,6 +10,10 @@ public class Szczegoly_zamowienia {
 
     @EmbeddedId
     private CompositePrimaryKeySzcze_zam compositePrimaryKeySzcze_zam;
+
+    public Szczegoly_zamowienia() {
+    }
+
     @ManyToOne
     @JoinColumn(name = "album_id", insertable = false, updatable = false)
     private Album album;
@@ -25,6 +29,10 @@ public class Szczegoly_zamowienia {
 
     public Integer getSzcze_zam_ilosc() {
         return szcze_zam_ilosc;
+    }
+
+    public Szczegoly_zamowienia(CompositePrimaryKeySzcze_zam compositePrimaryKeySzcze_zam) {
+        this.compositePrimaryKeySzcze_zam = compositePrimaryKeySzcze_zam;
     }
 
     public void setSzcze_zam_ilosc(Integer szcze_zam_ilosc) {

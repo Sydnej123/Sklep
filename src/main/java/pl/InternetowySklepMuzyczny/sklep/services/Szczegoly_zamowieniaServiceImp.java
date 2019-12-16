@@ -35,4 +35,9 @@ public class Szczegoly_zamowieniaServiceImp implements Szczegoly_zamowieniaServi
         Pageable pageable = PageRequest.of(0,1);
         return (!szczegoly_zamowieniaRepository.getBestSellerAlbumName(dateFrom, dateTo,pageable).get(0).isEmpty())?szczegoly_zamowieniaRepository.getBestSellerAlbumName(dateFrom, dateTo,pageable).get(0):"Błąd";
     }
+
+    @Override
+    public void save(Szczegoly_zamowienia szczegoly_zamowienia) {
+        szczegoly_zamowieniaRepository.save(szczegoly_zamowienia);
+    }
 }

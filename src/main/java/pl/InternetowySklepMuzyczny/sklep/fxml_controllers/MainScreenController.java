@@ -119,7 +119,6 @@ public class MainScreenController  implements Initializable {
             temporaryBorderPane.add(new BorderPane());
             image = new ImageView();
             try {
-                System.out.println(this.getClass().getClassLoader().getResource("album_covers/"+album.getAlbum_zdjecie_sciezka()));
                 tempImage = new Image(this.getClass().getClassLoader().getResourceAsStream("album_covers/"+album.getAlbum_zdjecie_sciezka()), 340, 340, false, false);
             }catch(Exception e){
                 e.printStackTrace();
@@ -185,11 +184,18 @@ public class MainScreenController  implements Initializable {
 
 
     private void addToChart(Album album) {
-        if(Cart.getAlbumsInCart().stream().noneMatch(c-> c.getAlbum() == album)){
+        if(album.getAlbum_ilosc() == 0){
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Brak wybranego towaru.", ButtonType.OK);
+            alert.showAndWait();
+
+        }
+        else if(Cart.getAlbumsInCart().stream().noneMatch(c-> c.getAlbum() == album)){
             Cart.getAlbumsInCart().add(new AlbumCart(album, 1));
-            // dodać komunikat dodano do koszyka
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Dodano do koszyka.", ButtonType.OK);
+            alert.showAndWait();
         }else{
-            System.out.println("Koszyk zawiera już"); // zamienić w dialog
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Album już znajduję się w koszyku.", ButtonType.OK);
+            alert.showAndWait();
         }
 
     }
