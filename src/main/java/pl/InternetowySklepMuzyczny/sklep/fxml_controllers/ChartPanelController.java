@@ -175,6 +175,8 @@ public class ChartPanelController implements Initializable {
                         temp = new Szczegoly_zamowienia(new CompositePrimaryKeySzcze_zam(zamowienie.getZamowienie_id(), albumCart.getAlbum().getAlbum_id()));
                         temp.setSzcze_zam_cena_jednostki((double) albumCart.getAlbum().getAlbum_cena());
                         temp.setSzcze_zam_ilosc(albumCart.getAlbumCount());
+                        albumCart.getAlbum().setAlbum_ilosc(albumCart.getAlbum().getAlbum_ilosc()-albumCart.getAlbumCount());
+                        albumServiceImp.save(albumCart.getAlbum());
                         szczegoly_zamowienia.add(temp);
                         szczegoly_zamowieniaServiceImp.save(temp);
                     }
@@ -183,7 +185,8 @@ public class ChartPanelController implements Initializable {
                     Cart.getAlbumsInCart().clear();
                     commentArea.clear();
                     showCart();
-                    System.out.println("Dodano zamówienia do zrealizowania");
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Zamówienie zostało złożone.", ButtonType.OK);
+                    alert.showAndWait();
                 }else{
                     Alert alert = new Alert(Alert.AlertType.WARNING, "Brak towaru na stanie.", ButtonType.OK);
                     alert.showAndWait();

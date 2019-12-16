@@ -261,6 +261,12 @@ public class MainScreenController  implements Initializable {
             price.setText(Float.toString(album.getAlbum_cena()));
             addToChartButtons.add(new Button());
             addToChartButtons.get(i).setText("Dodaj do koszyka");
+            addToChartButtons.get(i).setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    addToChart(album);
+                }
+            });
             albumNameLabel = new Label();
             albumNameLabel.setText("Nazwa albumu");
             bandLabel = new Label();
